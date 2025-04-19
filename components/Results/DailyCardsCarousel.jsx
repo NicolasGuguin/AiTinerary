@@ -58,7 +58,7 @@ export default function DailyCardsCarousel({ steps, cities }) {
       setCardWidth(cardRef.current.offsetWidth + 24); // +24 pour gap-6
     };
 
-    updateWidth(); // init
+    updateWidth();
 
     const resizeObserver = new ResizeObserver(updateWidth);
     resizeObserver.observe(cardRef.current);
@@ -117,15 +117,19 @@ export default function DailyCardsCarousel({ steps, cities }) {
               <motion.div
                 key={`${city.id}-${index}`}
                 ref={index === 0 ? cardRef : null}
-                className="min-w-[220px] sm:min-w-[240px] md:min-w-[260px] max-w-[280px] bg-card rounded-xl shadow-xl p-4 flex-shrink-0 origin-center"
+                className="min-w-[220px] sm:min-w-[240px] md:min-w-[260px] max-w-[280px] bg-card rounded-xl shadow-xl p-4 flex-shrink-0 origin-center h-[330px] sm:h-[340px] md:h-[360px] overflow-hidden"
                 style={{
                   scale: isCenter ? 1.05 : 0.95,
                   opacity: isCenter ? 1 : 0.7,
                   transition: "all 0.3s ease-in-out",
                 }}
               >
-                <div className="h-40 w-full rounded-lg overflow-hidden mb-4 bg-gradient-to-br from-primary to-secondary">
-                  <img src={imageUrl} alt={city.name} className="object-cover h-full w-full" />
+                <div className="h-40 min-h-[160px] w-full rounded-lg overflow-hidden mb-4 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                  <img
+                    src={imageUrl}
+                    alt={city.name}
+                    className="object-cover h-full w-full block"
+                  />
                 </div>
                 <h3 className="text-secondary text-sm font-semibold mb-1">Jour {step.day}</h3>
                 <p className="text-lg font-bold text-white mb-1">{city.name}</p>
