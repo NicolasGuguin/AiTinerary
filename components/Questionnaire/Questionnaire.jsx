@@ -66,36 +66,38 @@ export default function Questionnaire() {
         <StepComponent formData={formData} setFormData={setFormData} />
       </div>
 
-      {/* Navigation */}
-      <div className="flex justify-between pt-6">
-        {step > 0 ? (
-          <button
-            onClick={handlePrevious}
-            className="px-6 py-2 rounded-xl bg-background border border-secondary text-secondary hover:bg-secondary hover:text-black transition-all"
-          >
-            ⬅ Précédent
-          </button>
-        ) : <div></div>}
+    {/* Navigation */}
+    <div className="flex justify-between pt-6 gap-4 flex-wrap sm:flex-nowrap">
+      {step > 0 ? (
+        <button
+          onClick={handlePrevious}
+          className="min-w-[140px] px-6 py-2 rounded-xl bg-background border border-secondary text-secondary hover:bg-secondary hover:text-black transition-all text-center"
+        >
+          ⬅ Précédent
+        </button>
+      ) : (
+        <div className="min-w-[140px] invisible">⬅</div>
+      )}
 
-        {step < steps.length - 1 ? (
-          <button
-            onClick={handleNext}
-            className="px-6 py-2 rounded-xl bg-primary text-white hover:bg-secondary hover:text-black transition-all"
-          >
-            Suivant ➡
-          </button>
-        ) : (
-          <button
-            className="px-6 py-2 rounded-xl bg-green-600 text-white hover:bg-green-500 transition-all"
-            onClick={() => {
-              console.log("Form submitted:", formData);
-              navigate("/results"); // redirection
-            }}
-          >
-           Valider
-          </button>
-        )}
-      </div>
+      {step < steps.length - 1 ? (
+        <button
+          onClick={handleNext}
+          className="min-w-[140px] px-6 py-2 rounded-xl bg-primary text-white hover:bg-secondary hover:text-black transition-all text-center"
+        >
+          Suivant ➡
+        </button>
+      ) : (
+        <button
+          className="min-w-[140px] px-6 py-2 rounded-xl bg-green-600 text-white hover:bg-green-500 transition-all text-center"
+          onClick={() => {
+            console.log("Form submitted:", formData);
+            navigate("/results");
+          }}
+        >
+          Valider
+        </button>
+      )}
+    </div>
     </div>
   );
 }

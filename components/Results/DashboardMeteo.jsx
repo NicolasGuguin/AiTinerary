@@ -28,7 +28,7 @@ export default function DashboardMeteo({ meteoData }) {
 
   return (
     <div className="h-full w-full overflow-hidden font-sans text-white">
-      <div className="h-full w-full flex flex-col items-center justify-center px-2 sm:px-6 py-4">
+      <div className="h-full w-full flex flex-col items-center justify-center px-1 sm:px-3 py-4">
         {/* En-têtes stylisés */}
         <div className="grid grid-cols-6 text-center font-bold mb-2 w-full max-w-4xl text-xs sm:text-sm text-primary">
           <div className="flex flex-col items-center gap-0.5 text-pink-400 leading-tight truncate">

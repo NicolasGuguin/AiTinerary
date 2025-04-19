@@ -72,10 +72,10 @@ export default function DashboardBudget({ budgetData }) {
                 {Icon && <Icon className="text-xl" style={{ color: item.color }} />}
                 <span className="font-semibold">{item.label}</span>
               </div>
-              <div className="flex items-center gap-3 font-mono">
+              <div className="grid grid-cols-2 gap-4 w-[120px] text-right font-mono">
                 <span className="text-gray-400">{item.value} €</span>
                 <span className="text-primary">{percent}%</span>
-              </div>
+                </div>
             </div>
           );
         })}

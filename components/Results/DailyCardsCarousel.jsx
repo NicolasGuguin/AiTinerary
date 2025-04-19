@@ -50,12 +50,21 @@ export default function DailyCardsCarousel({ steps, cities }) {
     return () => clearInterval(interval);
   }, [steps.length, isFullscreen]);
 
-  // Mesure réelle de la carte
+  // Dynamically measure card width
   useEffect(() => {
-    if (cardRef.current) {
+    if (!cardRef.current) return;
+
+    const updateWidth = () => {
       setCardWidth(cardRef.current.offsetWidth + 24); // +24 pour gap-6
-    }
-  }, [cardRef.current]);
+    };
+
+    updateWidth(); // init
+
+    const resizeObserver = new ResizeObserver(updateWidth);
+    resizeObserver.observe(cardRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   const scroll = (dir) => {
     setCurrentIndex((prev) =>
@@ -94,7 +103,7 @@ export default function DailyCardsCarousel({ steps, cities }) {
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={handleDragEnd}
-          animate={{ x: -cardWidth * currentIndex }}
+          animate={{ x: -(cardWidth || 260 + 24) * currentIndex }}
           transition={{ type: "spring", stiffness: 200, damping: 25 }}
         >
           {steps.map((step, index) => {
