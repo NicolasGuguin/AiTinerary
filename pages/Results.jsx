@@ -45,7 +45,8 @@ export default function Results() {
 
 
 
-        <div className="w-full max-w-[100%] sm:max-w-[90%] md:max-w-screen-md lg:max-w-screen-lg px-2 sm:px-4 md:px-8 lg:px-0 mx-auto space-y-12">
+        <div className="w-full max-w-screen-lg px-1 sm:px-2 md:px-6 lg:px-0 mx-auto space-y-12">
+
 
 
 
@@ -53,19 +54,19 @@ export default function Results() {
           <DashboardResume />
 
         {/* Carte */}
-        <section className="bg-card rounded-2xl p-6 md:p-10 shadow-lg">
+        <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-2xl font-bold text-secondary mb-6">Carte de l’itinéraire</h2>
           <ItineraryMap steps={tripData.steps} cities={tripData.cities} />
         </section>
 
         {/* Carrousel */}
-        <section className="bg-card rounded-2xl p-6 md:p-10 shadow-lg">
+        <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-2xl font-bold text-secondary mb-6">Votre parcours jour par jour</h2>
           <DailyCardsCarousel steps={tripData.steps} cities={tripData.cities} />
         </section>
 
         {/* Trajets */}
-        <section className="bg-card rounded-2xl p-6 md:p-10 shadow-lg">
+        <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-2xl font-bold text-secondary mb-6">Vos trajets</h2>
           <DashboardTrajets
             trajets={tripData.trajets}
@@ -78,24 +79,24 @@ export default function Results() {
         </section>
 
         {/* Budget */}
-        <section className="bg-card rounded-2xl p-6 md:p-10 shadow-lg">
+        <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-2xl font-bold text-secondary mb-6">Budget estimé</h2>
           <DashboardBudget budgetData={tripData.budgetBreakdown} />
         </section>
 
         {/* Météo */}
-        <section className="bg-card rounded-2xl p-6 md:p-10 shadow-lg">
+        <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-2xl font-bold text-secondary mb-6">Prévisions météo</h2>
           <DashboardMeteo meteoData={tripData.meteoByCity} />
         </section>
 
         {/* À venir */}
-        <section className="bg-card rounded-2xl p-6 md:p-10 shadow-lg">
+        <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-xl font-semibold text-secondary mb-4">[Section : Spots & recommandations]</h2>
           <p className="text-gray-400">À venir…</p>
         </section>
 
-        <section className="bg-card rounded-2xl p-6 md:p-10 shadow-lg">
+        <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-xl font-semibold text-secondary mb-4">[Section : Visualisation graphique]</h2>
           <p className="text-gray-400">À venir…</p>
         </section>
