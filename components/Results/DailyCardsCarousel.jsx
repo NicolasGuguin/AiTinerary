@@ -10,11 +10,13 @@ export default function DailyCardsCarousel({ steps, cities }) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesMap, setImagesMap] = useState({});
+  const [cardWidth, setCardWidth] = useState(0);
+  const cardRef = useRef(null);
   const sliderRef = useRef(null);
 
   const getCityById = (id) => cities.find((c) => c.id === id);
 
-  // Chargement des images dynamiques
+  // Chargement des images
   useEffect(() => {
     const uniqueCityIds = [...new Set(steps.map((step) => step.cityId))];
 
@@ -48,11 +50,16 @@ export default function DailyCardsCarousel({ steps, cities }) {
     return () => clearInterval(interval);
   }, [steps.length, isFullscreen]);
 
+  // Mesure réelle de la carte
+  useEffect(() => {
+    if (cardRef.current) {
+      setCardWidth(cardRef.current.offsetWidth + 24); // +24 pour gap-6
+    }
+  }, [cardRef.current]);
+
   const scroll = (dir) => {
     setCurrentIndex((prev) =>
-      dir === "left"
-        ? (prev - 1 + steps.length) % steps.length
-        : (prev + 1) % steps.length
+      dir === "left" ? (prev - 1 + steps.length) % steps.length : (prev + 1) % steps.length
     );
   };
 
@@ -60,9 +67,6 @@ export default function DailyCardsCarousel({ steps, cities }) {
     if (info.offset.x < -100) scroll("right");
     else if (info.offset.x > 100) scroll("left");
   };
-
-  const CARD_WIDTH = 240 + 24;
-
 
   return (
     <div className="relative w-full overflow-hidden pt-6">
@@ -83,15 +87,14 @@ export default function DailyCardsCarousel({ steps, cities }) {
         </>
       )}
 
-    <div className="overflow-hidden px-4 sm:px-8 md:px-12 mx-auto">
-
+      <div className="overflow-hidden px-2 sm:px-6 md:px-12 mx-auto">
         <motion.div
           ref={sliderRef}
           className="flex gap-6"
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={handleDragEnd}
-          animate={{ x: -CARD_WIDTH * currentIndex }}
+          animate={{ x: -cardWidth * currentIndex }}
           transition={{ type: "spring", stiffness: 200, damping: 25 }}
         >
           {steps.map((step, index) => {
@@ -102,9 +105,10 @@ export default function DailyCardsCarousel({ steps, cities }) {
             const imageUrl = imagesMap[city.name] || "https://source.unsplash.com/400x300/?travel,nature";
 
             return (
-                <motion.div
+              <motion.div
                 key={`${city.id}-${index}`}
-                className="min-w-[220px] sm:min-w-[240px] md:min-w-[260px] max-w-[280px] bg-card rounded-xl shadow-xl p-4 flex-shrink-0 origin-center"              
+                ref={index === 0 ? cardRef : null}
+                className="min-w-[220px] sm:min-w-[240px] md:min-w-[260px] max-w-[280px] bg-card rounded-xl shadow-xl p-4 flex-shrink-0 origin-center"
                 style={{
                   scale: isCenter ? 1.05 : 0.95,
                   opacity: isCenter ? 1 : 0.7,
@@ -112,18 +116,10 @@ export default function DailyCardsCarousel({ steps, cities }) {
                 }}
               >
                 <div className="h-40 w-full rounded-lg overflow-hidden mb-4 bg-gradient-to-br from-primary to-secondary">
-                  <img
-                    src={imageUrl}
-                    alt={city.name}
-                    className="object-cover h-full w-full"
-                  />
+                  <img src={imageUrl} alt={city.name} className="object-cover h-full w-full" />
                 </div>
-                <h3 className="text-secondary text-sm font-semibold mb-1">
-                  Jour {step.day}
-                </h3>
-                <p className="text-lg font-bold text-white mb-1">
-                  {city.name}
-                </p>
+                <h3 className="text-secondary text-sm font-semibold mb-1">Jour {step.day}</h3>
+                <p className="text-lg font-bold text-white mb-1">{city.name}</p>
                 {step.activities && (
                   <p className="text-sm text-gray-400">{step.activities[0]}</p>
                 )}
