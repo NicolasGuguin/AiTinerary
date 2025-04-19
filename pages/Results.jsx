@@ -4,6 +4,8 @@ import DashboardMeteo from "../components/Results/DashboardMeteo";
 import DashboardTrajets from "../components/Results/DashboardTrajets";
 import DashboardBudget from "../components/Results/DashboardBudget";
 import DashboardResume from "../components/Results/DashboardResume";
+import DashboardSocial from "../components/Results/DashboardSocial";
+import DashboardConseils from "../components/Results/DashboardConseils";
 import tripData from "../data/tripData";
 
 // Utilitaire simple
@@ -88,17 +90,22 @@ export default function Results() {
           <DashboardMeteo meteoData={tripData.meteoByCity} />
         </section>
 
-        {/* À venir */}
+        {/* Conseils & recommandations */}
         <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
-          <h2 className="text-xl font-semibold text-secondary mb-4">[Section : Spots & recommandations]</h2>
-          <p className="text-gray-400">À venir…</p>
+        <h2 className="text-2xl font-bold text-secondary mb-6">Conseils et recommandations</h2>
+        <DashboardConseils tips={tripData.tips} />
+        </section>
+
+        {/* Réseaux sociaux */}
+        <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
+        <h2 className="text-2xl font-bold text-secondary mb-6">Ce que les voyageurs postent</h2>
+        <DashboardSocial cities={tripData.cities} />
         </section>
 
         <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-xl font-semibold text-secondary mb-4">[Section : Visualisation graphique]</h2>
           <p className="text-gray-400">À venir…</p>
         </section>
-
       </div>
     </div>
   );

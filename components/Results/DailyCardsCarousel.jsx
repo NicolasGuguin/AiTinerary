@@ -10,9 +10,7 @@ export default function DailyCardsCarousel({ steps, cities }) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesMap, setImagesMap] = useState({});
-  const [cardWidth, setCardWidth] = useState(0);
-  const cardRef = useRef(null);
-  const sliderRef = useRef(null);
+  const CARD_WIDTH = 260 + 24; // 260px + 24px de gap
 
   const getCityById = (id) => cities.find((c) => c.id === id);
 
@@ -50,22 +48,6 @@ export default function DailyCardsCarousel({ steps, cities }) {
     return () => clearInterval(interval);
   }, [steps.length, isFullscreen]);
 
-  // Dynamically measure card width
-  useEffect(() => {
-    if (!cardRef.current) return;
-
-    const updateWidth = () => {
-      setCardWidth(cardRef.current.offsetWidth + 24); // +24 pour gap-6
-    };
-
-    updateWidth();
-
-    const resizeObserver = new ResizeObserver(updateWidth);
-    resizeObserver.observe(cardRef.current);
-
-    return () => resizeObserver.disconnect();
-  }, []);
-
   const scroll = (dir) => {
     setCurrentIndex((prev) =>
       dir === "left" ? (prev - 1 + steps.length) % steps.length : (prev + 1) % steps.length
@@ -98,12 +80,11 @@ export default function DailyCardsCarousel({ steps, cities }) {
 
       <div className="overflow-hidden px-2 sm:px-6 md:px-12 mx-auto">
         <motion.div
-          ref={sliderRef}
           className="flex gap-6"
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={handleDragEnd}
-          animate={{ x: -(cardWidth || 260 + 24) * currentIndex }}
+          animate={{ x: -CARD_WIDTH * currentIndex }}
           transition={{ type: "spring", stiffness: 200, damping: 25 }}
         >
           {steps.map((step, index) => {
@@ -116,20 +97,15 @@ export default function DailyCardsCarousel({ steps, cities }) {
             return (
               <motion.div
                 key={`${city.id}-${index}`}
-                ref={index === 0 ? cardRef : null}
-                className="min-w-[220px] sm:min-w-[240px] md:min-w-[260px] max-w-[280px] bg-card rounded-xl shadow-xl p-4 flex-shrink-0 origin-center h-[330px] sm:h-[340px] md:h-[360px] overflow-hidden"
+                className="w-[260px] bg-card rounded-xl shadow-xl p-4 flex-shrink-0 origin-center"
                 style={{
                   scale: isCenter ? 1.05 : 0.95,
                   opacity: isCenter ? 1 : 0.7,
                   transition: "all 0.3s ease-in-out",
                 }}
               >
-                <div className="h-40 min-h-[160px] w-full rounded-lg overflow-hidden mb-4 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                  <img
-                    src={imageUrl}
-                    alt={city.name}
-                    className="object-cover h-full w-full block"
-                  />
+                <div className="h-40 w-full rounded-lg overflow-hidden mb-4 bg-gradient-to-br from-primary to-secondary">
+                  <img src={imageUrl} alt={city.name} className="object-cover h-full w-full" />
                 </div>
                 <h3 className="text-secondary text-sm font-semibold mb-1">Jour {step.day}</h3>
                 <p className="text-lg font-bold text-white mb-1">{city.name}</p>

@@ -49,7 +49,37 @@ const tripData = {
       { label: "Nourriture",  value: 300, color: "#10B981", icon: "MdRestaurant" },
       { label: "Activités",   value: 350, color: "#EAB308", icon: "MdLocalActivity" },
       { label: "Souvenirs",   value: 150, color: "#A855F7", icon: "MdCardGiftcard" }
+    ],
+
+    tips: [
+      {
+        category: "Visa",
+        icon: "🛂",
+        text: "Pas besoin de visa pour un séjour de moins de 90 jours au Japon si vous êtes français.",
+      },
+      {
+        category: "Monnaie",
+        icon: "💴",
+        text: "Le Japon utilise le yen. Prévoyez du cash, car les cartes ne sont pas toujours acceptées.",
+      },
+      {
+        category: "Transport",
+        icon: "🚄",
+        text: "Pensez au JR Pass si vous prenez plusieurs fois le Shinkansen.",
+      },
+      {
+        category: "Préparation",
+        icon: "📅",
+        text: "Réservez vos vols 3 à 5 mois à l’avance pour obtenir les meilleurs prix.",
+      },
+      {
+        category: "Bagages",
+        icon: "🎒",
+        text: "Préférez un sac léger, certains hôtels proposent des laveries ou services de lessive.",
+      },
     ]
+    
+
   };
   
   // Ajout de Transport automatiquement dans le budget
