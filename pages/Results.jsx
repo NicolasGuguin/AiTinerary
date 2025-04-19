@@ -34,18 +34,19 @@ export default function Results() {
     <div className="min-h-screen bg-background text-white px-4 py-8 md:px-12 md:py-16 font-sans">
       {/* Titre principal */}
       <div className="text-center mb-12">
-  <h1 className="text-4xl md:text-5xl font-extrabold text-[#F43F5E] drop-shadow-[0_0_8px_rgba(244,63,94,0.6)]">
-    Votre aventure commence
-  </h1>
-  <p className="mt-2 text-lg md:text-xl text-[#FDBA74] font-medium">
-    Itinéraire généré. Décollage imminent ✈️
-  </p>
-</div>
+        <h1 className="text-4xl md:text-5xl font-extrabold text-[#F43F5E] drop-shadow-[0_0_8px_rgba(244,63,94,0.6)]">
+            Votre aventure commence
+        </h1>
+        <p className="mt-2 text-lg md:text-xl text-[#FDBA74] font-medium">
+            Itinéraire généré. Décollage imminent ✈️
+        </p>
+        </div>
 
 
 
 
-      <div className="max-w-5xl mx-auto space-y-12">
+    <div className="w-full max-w-screen-lg px-2 sm:px-4 md:px-8 lg:px-0 mx-auto space-y-12">
+
 
         {/* Résumé global */}
           <DashboardResume />

@@ -28,27 +28,33 @@ export default function DashboardMeteo({ meteoData }) {
 
   return (
     <div className="h-full w-full overflow-hidden font-sans text-white">
-      <div className="h-full w-full flex flex-col items-center justify-center px-6 py-4">
+      <div className="h-full w-full flex flex-col items-center justify-center px-2 sm:px-6 py-4">
         {/* En-têtes stylisés */}
-        <div className="grid grid-cols-6 text-center font-bold mb-2 w-full max-w-4xl text-sm text-primary">
-          <div className="flex justify-center items-center gap-1 text-pink-400">
-            <MdLocationOn /> Ville
-          </div>
-          <div className="flex justify-center items-center gap-1 text-red-400">
-            <MdThermostat /> Temp.
-          </div>
-          <div className="flex justify-center items-center gap-1 text-blue-300">
-            <MdOpacity /> Pluie
-          </div>
-          <div className="flex justify-center items-center gap-1 text-yellow-400">
-            <MdWbSunny /> Soleil
-          </div>
-          <div className="flex justify-center items-center gap-1 text-cyan-300">
-            <MdWaterDrop /> Humidité
-          </div>
-          <div className="flex justify-center items-center gap-1 text-gray-300">
-            <MdTerrain /> Altitude
-          </div>
+        <div className="grid grid-cols-6 text-center font-bold mb-2 w-full max-w-4xl text-xs sm:text-sm text-primary">
+        <div className="flex flex-col items-center gap-0.5 text-pink-400 leading-tight truncate">
+            <MdLocationOn className="text-base sm:text-lg" />
+            <span>Ville</span>
+        </div>
+        <div className="flex flex-col items-center gap-0.5 text-red-400 leading-tight truncate">
+            <MdThermostat className="text-base sm:text-lg" />
+            <span>Temp.</span>
+        </div>
+        <div className="flex flex-col items-center gap-0.5 text-blue-300 leading-tight truncate">
+            <MdOpacity className="text-base sm:text-lg" />
+            <span>Pluie</span>
+        </div>
+        <div className="flex flex-col items-center gap-0.5 text-yellow-400 leading-tight truncate">
+            <MdWbSunny className="text-base sm:text-lg" />
+            <span>Soleil</span>
+        </div>
+        <div className="flex flex-col items-center gap-0.5 text-cyan-300 leading-tight truncate">
+            <MdWaterDrop className="text-base sm:text-lg" />
+            <span>Humidité</span>
+        </div>
+        <div className="flex flex-col items-center gap-0.5 text-gray-300 leading-tight truncate">
+            <MdTerrain className="text-base sm:text-lg" />
+            <span>Altitude</span>
+        </div>
         </div>
 
         {/* Contenu scrollable avec style visuel */}

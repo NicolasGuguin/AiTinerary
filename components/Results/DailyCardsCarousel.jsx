@@ -82,7 +82,8 @@ export default function DailyCardsCarousel({ steps, cities }) {
         </>
       )}
 
-      <div className="overflow-hidden px-12">
+    <div className="overflow-hidden px-4 sm:px-8 md:px-12 mx-auto">
+
         <motion.div
           ref={sliderRef}
           className="flex gap-6"

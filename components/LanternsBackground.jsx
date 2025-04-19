@@ -41,7 +41,7 @@ const StylizedLanterns = () => {
   
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0">
+    <div className="hidden md:block absolute inset-0 pointer-events-none z-0">
       {lanterns.map((lanternData) => (
         <img
           key={lanternData.id}

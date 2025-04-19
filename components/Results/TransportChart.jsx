@@ -30,6 +30,7 @@ export default function TransportChart({ transportPerDay }) {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       tooltip: {
         callbacks: {
@@ -52,7 +53,9 @@ export default function TransportChart({ transportPerDay }) {
       <h3 className="text-lg text-secondary font-semibold mb-2">
         Temps de transport par jour
       </h3>
-      <Bar data={data} options={options} />
+      <div className="w-full h-[260px] md:h-[400px]">
+        <Bar data={data} options={options} />
+      </div>
     </div>
-  );
+  );  
 }
