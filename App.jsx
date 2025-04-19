@@ -9,7 +9,7 @@ import LanternsBackground from "./components/LanternsBackground";
 function App() {
   return (
 
-    <div className="min-h-screen bg-background text-text font-sans px-6 py-12">
+    <div className="min-h-screen bg-background text-text font-sans px-0 py-12 sm:px-4 md:px-6">
       <Header />
       <div className="min-h-screen relative font-sans">
       <LanternsBackground />
