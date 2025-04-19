@@ -45,9 +45,7 @@ export default function Results() {
 
 
 
-        <div className="w-full max-w-screen-lg px-1 sm:px-2 md:px-6 lg:px-0 mx-auto space-y-12">
-
-
+        <div className="w-full max-w-screen-lg px-[4px] sm:px-3 md:px-6 lg:px-0 mx-auto space-y-12">
 
 
         {/* Résumé global */}

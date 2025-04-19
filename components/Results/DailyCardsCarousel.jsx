@@ -61,7 +61,8 @@ export default function DailyCardsCarousel({ steps, cities }) {
     else if (info.offset.x > 100) scroll("left");
   };
 
-  const CARD_WIDTH = 280 + 24;
+  const CARD_WIDTH = 240 + 24;
+
 
   return (
     <div className="relative w-full overflow-hidden pt-6">
@@ -101,9 +102,9 @@ export default function DailyCardsCarousel({ steps, cities }) {
             const imageUrl = imagesMap[city.name] || "https://source.unsplash.com/400x300/?travel,nature";
 
             return (
-              <motion.div
+                <motion.div
                 key={`${city.id}-${index}`}
-                className="min-w-[260px] max-w-[280px] bg-card rounded-xl shadow-xl p-4 flex-shrink-0 origin-center"
+                className="min-w-[220px] sm:min-w-[240px] md:min-w-[260px] max-w-[280px] bg-card rounded-xl shadow-xl p-4 flex-shrink-0 origin-center"              
                 style={{
                   scale: isCenter ? 1.05 : 0.95,
                   opacity: isCenter ? 1 : 0.7,
