@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useMapContext } from "../../context/MapContext";
 import { motion } from "framer-motion";
+import { apiKeys } from "../../config/apiKeys";
 
 export default function DailyCardsCarousel({ steps, cities }) {
   const { isFullscreen } = useMapContext();
   const AUTO_SCROLL = true;
   const AUTO_SCROLL_INTERVAL = 10000;
-  const API_KEY = "We2NQN8adQWsPgWBiEefVNybGI5SO5n3ZamijIKhIsQPHmFSqUa3305Y";
+  const API_KEY = apiKeys.pexels;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesMap, setImagesMap] = useState({});

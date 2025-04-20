@@ -1,0 +1,142 @@
+{
+    "countries": ["Japon"],
+    "startDate": "2025-10-15",
+    "totalBudget": 2000,
+  
+    "cities": [
+      { "id": "Tokyo", "name": "Tokyo", "lat": 35.6762, "lng": 139.6503 },
+      { "id": "Hakone", "name": "Hakone", "lat": 35.2321, "lng": 139.1066 },
+      { "id": "Kyoto", "name": "Kyoto", "lat": 35.0116, "lng": 135.7681 },
+      { "id": "Nara", "name": "Nara", "lat": 34.6851, "lng": 135.805 },
+      { "id": "Osaka", "name": "Osaka", "lat": 34.6937, "lng": 135.5023 },
+      { "id": "Kobe", "name": "Kobe", "lat": 34.6901, "lng": 135.1955 }
+    ],
+  
+    "steps": [
+      { "day": 1, "cityId": "Tokyo", "activities": ["Arrivée à Tokyo", "Balade à Shibuya", "Coucher de soleil à Roppongi Hills"] },
+      { "day": 2, "cityId": "Tokyo", "activities": ["Visite d'Asakusa", "Akihabara", "Tokyo Skytree"] },
+      { "day": 3, "cityId": "Hakone", "activities": ["Détente dans un onsen", "Croisière sur le Lac Ashi", "Musée en plein air"] },
+      { "day": 4, "cityId": "Kyoto", "activities": ["Fushimi Inari", "Gion", "Matcha & temples"] },
+      { "day": 5, "cityId": "Kyoto", "activities": ["Arashiyama", "Kinkaku-ji", "Ryokan traditionnel"] },
+      { "day": 6, "cityId": "Nara", "activities": ["Nara Park", "Daibutsu", "Cerfs en liberté"] },
+      { "day": 7, "cityId": "Osaka", "activities": ["Château d'Osaka", "Dotonbori", "Street food"] },
+      { "day": 8, "cityId": "Kobe", "activities": ["Mont Rokko", "Port de Kobe", "Dîner de bœuf de Kobe"] },
+      { "day": 9, "cityId": "Tokyo", "activities": ["Retour à Tokyo", "Shopping à Harajuku", "Derniers sushis"] },
+      { "day": 10, "cityId": "Tokyo", "activities": ["Matinée libre", "Départ"] }
+    ],
+  
+    "trajets": [
+      { "day": 3, "from": "Tokyo", "to": "Hakone", "mode": "Train", "duration": "2h15", "distance": 150, "price": 20 },
+      { "day": 4, "from": "Hakone", "to": "Kyoto", "mode": "Shinkansen", "duration": "2h45", "distance": 370, "price": 66 },
+      { "day": 6, "from": "Kyoto", "to": "Nara", "mode": "Train", "duration": "1h10", "distance": 80, "price": 13 },
+      { "day": 7, "from": "Nara", "to": "Osaka", "mode": "Bus", "duration": "1h30", "distance": 90, "price": 12 },
+      { "day": 8, "from": "Osaka", "to": "Kobe", "mode": "Train", "duration": "0h50", "distance": 35, "price": 10 },
+      { "day": 9, "from": "Kobe", "to": "Tokyo", "mode": "Shinkansen", "duration": "3h20", "distance": 480, "price": 75 }
+    ],
+
+    "meteoByCity": [
+    { "cityId": "Tokyo",  "temp": "22°C", "pluie": "30%", "soleil": "6h",  "humidite": "68%", "altitude": "40 m" },
+    { "cityId": "Hakone", "temp": "18°C", "pluie": "60%", "soleil": "3h",  "humidite": "78%", "altitude": "723 m" },
+    { "cityId": "Kyoto",  "temp": "21°C", "pluie": "25%", "soleil": "7h",  "humidite": "65%", "altitude": "50 m" },
+    { "cityId": "Nara",   "temp": "20°C", "pluie": "20%", "soleil": "8h",  "humidite": "60%", "altitude": "85 m" },
+    { "cityId": "Osaka",  "temp": "23°C", "pluie": "15%", "soleil": "9h",  "humidite": "58%", "altitude": "3 m" },
+    { "cityId": "Kobe",   "temp": "22°C", "pluie": "10%", "soleil": "10h", "humidite": "55%", "altitude": "10 m" }
+    ],
+  
+"activities": [
+  { "id": "tokyo", "stepDay": 1, "title": "Arrivée à Tokyo", "description": "Installation et premiers pas dans la capitale japonaise." },
+  { "id": "shibuya", "stepDay": 1, "title": "Balade à Shibuya", "description": "Traversez le célèbre carrefour et imprégnez-vous de l’ambiance électrique." },
+  { "id": "roppongi-sunset", "stepDay": 1, "title": "Coucher de soleil à Roppongi Hills", "description": "Admirez Tokyo depuis la Mori Tower." },
+  { "id": "sensoji", "stepDay": 2, "title": "Visite d'Asakusa", "description": "Découvrez le temple Sensō-ji et les ruelles commerçantes." },
+  { "id": "akihabara", "stepDay": 2, "title": "Akihabara", "description": "Plongez dans l’univers geek et rétro-gaming." },
+  { "id": "skytree", "stepDay": 2, "title": "Tokyo Skytree", "description": "Grimpez dans l'une des plus hautes tours du monde." },
+  { "id": "onsen", "stepDay": 3, "title": "Détente dans un onsen", "description": "Bain thermal traditionnel avec vue sur les montagnes." },
+  { "id": "lake-ashi", "stepDay": 3, "title": "Croisière sur le Lac Ashi", "description": "Naviguez paisiblement avec vue sur le Mont Fuji." },
+  { "id": "open-air-museum", "stepDay": 3, "title": "Musée en plein air", "description": "Art moderne en pleine nature." },
+  { "id": "fushimi-inari", "stepDay": 4, "title": "Fushimi Inari", "description": "Marchez sous les milliers de torii rouges." },
+  { "id": "gion", "stepDay": 4, "title": "Gion", "description": "Quartier historique des geishas." },
+  { "id": "matcha", "stepDay": 4, "title": "Matcha & temples", "description": "Dégustation de matcha après visite de temples zen." },
+  { "id": "bamboo-forest", "stepDay": 5, "title": "Arashiyama", "description": "Forêt de bambous et rivières paisibles." },
+  { "id": "kinkakuji", "stepDay": 5, "title": "Kinkaku-ji", "description": "Admirez le célèbre Pavillon d'Or." },
+  { "id": "ryokan", "stepDay": 5, "title": "Ryokan traditionnel", "description": "Nuit dans une auberge japonaise typique." },
+  { "id": "nara-deer", "stepDay": 6, "title": "Nara Park", "description": "Cerfs en liberté et temples majestueux." },
+  { "id": "great-buddha", "stepDay": 6, "title": "Daibutsu", "description": "La grande statue de Bouddha du temple Tōdai-ji." },
+  { "id": "deer", "stepDay": 6, "title": "Cerfs en liberté", "description": "Rencontrez les animaux sacrés dans les parcs." },
+  { "id": "osaka-castle", "stepDay": 7, "title": "Château d'Osaka", "description": "Monument historique entouré de cerisiers." },
+  { "id": "dotonbori", "stepDay": 7, "title": "Dotonbori", "description": "Quartier animé avec néons et street food." },
+  { "id": "street-food", "stepDay": 7, "title": "Street food", "description": "Takoyakis, okonomiyakis et autres spécialités locales." },
+  { "id": "rokko-mountain", "stepDay": 8, "title": "Mont Rokko", "description": "Vue panoramique sur la baie de Kobe." },
+  { "id": "kobe-harbor", "stepDay": 8, "title": "Port de Kobe", "description": "Balade entre mer et architecture moderne." },
+  { "id": "wagyu", "stepDay": 8, "title": "Dîner de bœuf de Kobe", "description": "Savourez la viande la plus réputée du Japon." },
+  { "id": "tokyo-return", "stepDay": 9, "title": "Retour à Tokyo", "description": "Derniers moments dans la capitale." },
+  { "id": "harajuku", "stepDay": 9, "title": "Shopping à Harajuku", "description": "Mode et boutiques originales." },
+  { "id": "sushi", "stepDay": 9, "title": "Derniers sushis", "description": "Clôturez votre voyage avec des sushis frais." },
+  { "id": "tokyo-stroll", "stepDay": 10, "title": "Matinée libre", "description": "Temps libre pour flâner ou acheter des souvenirs." },
+  { "id": "airport", "stepDay": 10, "title": "Départ", "description": "Trajet vers l’aéroport." }
+]
+,
+  
+    "budgetBreakdown": [
+    { "label": "Hébergement", "value": 700, "color": "#F43F5E", "icon": "MdHotel" },
+    { "label": "Nourriture",  "value": 300, "color": "#10B981", "icon": "MdRestaurant" },
+    { "label": "Activités",   "value": 350, "color": "#EAB308", "icon": "MdLocalActivity" },
+    { "label": "Souvenirs",   "value": 150, "color": "#A855F7", "icon": "MdCardGiftcard" }
+    ],
+
+  
+    "tips": [
+      { "category": "Visa", "icon": "Globe", "text": "Pas besoin de visa pour un séjour de moins de 90 jours." },
+      { "category": "Monnaie", "icon": "Coins", "text": "Prévoyez du cash, les cartes ne sont pas toujours acceptées." },
+      { "category": "Transport", "icon": "TrainFront", "text": "Le JR Pass est pratique si vous prenez souvent le train." },
+      { "category": "Préparation", "icon": "CalendarDays", "text": "Réservez vos vols plusieurs mois à l’avance." },
+      { "category": "Bagages", "icon": "Backpack", "text": "Voyagez léger, beaucoup d’hôtels proposent une laverie." }
+    ],
+  
+    "flights": {
+      "outbound": [
+        {
+          "type": "Rapide",
+          "company": "Air France",
+          "from": "Paris CDG",
+          "to": "Tokyo Narita",
+          "price": 890,
+          "duration": "11h45",
+          "stops": 0,
+          "date": "2025-10-15"
+        },
+        {
+          "type": "Bon compromis",
+          "company": "Turkish Airlines",
+          "from": "Paris CDG",
+          "to": "Tokyo Narita",
+          "price": 620,
+          "duration": "16h30",
+          "stops": 1,
+          "date": "2025-10-15"
+        }
+      ],
+      "return": [
+        {
+          "type": "Rapide",
+          "company": "Japan Airlines",
+          "from": "Tokyo Narita",
+          "to": "Paris CDG",
+          "price": 920,
+          "duration": "12h00",
+          "stops": 0,
+          "date": "2025-10-25"
+        },
+        {
+          "type": "Bon compromis",
+          "company": "Qatar Airways",
+          "from": "Tokyo Haneda",
+          "to": "Paris CDG",
+          "price": 590,
+          "duration": "17h10",
+          "stops": 1,
+          "date": "2025-10-25"
+        }
+      ]
+    }
+  }
+  

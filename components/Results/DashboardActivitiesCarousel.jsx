@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { apiKeys } from "../../config/apiKeys";
 
 export default function DashboardActivitesCarousel({ steps, activities, cities }) {
-  const API_KEY = "We2NQN8adQWsPgWBiEefVNybGI5SO5n3ZamijIKhIsQPHmFSqUa3305Y";
+  const PEXELS_API_KEY  = apiKeys.pexels;
+  const UNSPLASH_ACCESS_KEY = apiKeys.unsplash;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesMap, setImagesMap] = useState({});
   const CARD_WIDTH = 260 + 24;
@@ -19,29 +21,74 @@ export default function DashboardActivitesCarousel({ steps, activities, cities }
       }))
   );
 
+  function extractVisualKeywords(text) {
+    if (!window.Intl || !Intl.Segmenter) return text;
+  
+    const segmenter = new Intl.Segmenter("fr", { granularity: "word" }); // "fr" = par défaut mais à terme dynamique
+    const segments = Array.from(segmenter.segment(text.toLowerCase()));
+  
+    return segments
+      .map(seg => seg.segment.trim())
+      .filter(seg => seg && seg.length > 2 && !seg.match(/^[\d\W]+$/)) // ignore nombres, ponctuations
+      .slice(0, 6) // limiter pour ne pas trop allonger la requête
+      .join(" ");
+  }
+
+  function buildQuery(activity) {
+    const base = `${activity.id} ${activity.cityName}`;
+    const visualWords = extractVisualKeywords(base);
+    return `${visualWords} travel`;
+  }
+
+  function cleanForPexels(text) {
+    return text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // supprime les accents
+      .replace(/[^a-zA-Z0-9 ]/g, "") // supprime les caractères spéciaux
+      .trim();
+  }
+  
+  
+  
+
   // Récupération d’images Pexels
   useEffect(() => {
     allActivities.forEach((activity) => {
       if (imagesMap[activity.id]) return;
-
-      const query = `${activity.title} ${activity.cityName}`;
-
-      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1`, {
-        headers: { Authorization: API_KEY },
-      })
+  
+      const query = cleanForPexels(buildQuery(activity));
+      fetch(
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=3`,
+        {
+          headers: {
+            Authorization: PEXELS_API_KEY,
+          },
+        }
+      )
         .then((res) => res.json())
-        .then((data) => {
-          const url = data.photos?.[0]?.src?.medium || "https://source.unsplash.com/400x300/?travel,activity";
-          setImagesMap((prev) => ({ ...prev, [activity.id]: url }));
+        .then((pexelsData) => {
+          const photos = pexelsData.photos || [];
+          const random = photos[Math.floor(Math.random() * photos.length)];
+          const url = random?.src?.medium || fallbackImage;
+  
+          setImagesMap((prev) => ({
+            ...prev,
+            [activity.id]: url,
+          }));
         })
         .catch(() => {
           setImagesMap((prev) => ({
             ...prev,
-            [activity.id]: "https://source.unsplash.com/400x300/?travel,activity",
+            [activity.id]: fallbackImage,
           }));
         });
     });
   }, [allActivities, imagesMap]);
+  
+  
+  
+  
+  
 
   const scroll = (dir) => {
     setCurrentIndex((prev) =>
