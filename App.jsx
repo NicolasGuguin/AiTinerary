@@ -12,7 +12,6 @@ function App() {
     <div className="min-h-screen bg-background text-text font-sans px-0 py-12 sm:px-4 md:px-6">
       <Header />
       <div className="min-h-screen relative font-sans">
-      <LanternsBackground />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<CreateTrip />} />

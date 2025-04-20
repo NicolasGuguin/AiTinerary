@@ -3,7 +3,7 @@ import tripData from "../../data/tripData";
 
 export default function DashboardResume() {
   const {
-    country,
+    countries,
     startDate,
     totalBudget,
     trajets,
@@ -21,13 +21,13 @@ export default function DashboardResume() {
   const formatMinutes = (m) => `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, "0")}min`;
 
   const items = [
-    { icon: <MdOutlineFlag size={24} />, label: "Pays", value: country },
+    { icon: <MdOutlineFlag size={24} />, label: "Pays", value: countries.join(", ") },
     { icon: <MdCalendarToday size={24} />, label: "Départ", value: startDate },
     { icon: <MdAccessTime size={24} />, label: "Durée", value: `${durationDays} jours` },
     { icon: <MdExplore size={24} />, label: "Étapes", value: `${totalSteps}` },
     { icon: <MdDirections size={24} />, label: "Distance", value: `${totalDistance} km` },
     { icon: <MdTrain size={24} />, label: "Transport total", value: formatMinutes(totalTransportMinutes) },
-    { icon: <MdMap size={24} />, label: "Moyenne/jour", value: formatMinutes(avgTransport) },
+    { icon: <MdMap size={24} />, label: "Transport/jour", value: formatMinutes(avgTransport) },
     { icon: <MdEuro size={24} />, label: "Budget", value: `${totalBudget} €` }
   ];
 

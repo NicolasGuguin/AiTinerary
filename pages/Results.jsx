@@ -6,6 +6,8 @@ import DashboardBudget from "../components/Results/DashboardBudget";
 import DashboardResume from "../components/Results/DashboardResume";
 import DashboardSocial from "../components/Results/DashboardSocial";
 import DashboardConseils from "../components/Results/DashboardConseils";
+import DashboardActivitiesCarousel from "../components/Results/DashboardActivitiesCarousel";
+import DashboardFlights from "../components/Results/DashboardFlights";
 import tripData from "../data/tripData";
 
 // Utilitaire simple
@@ -78,11 +80,27 @@ export default function Results() {
             />
         </section>
 
+        {/*  Vols */}
+        {tripData.flights && (
+        <DashboardFlights flights={tripData.flights} />
+        )}
+
         {/* Budget */}
         <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-2xl font-bold text-secondary mb-6">Budget estimé</h2>
           <DashboardBudget budgetData={tripData.budgetBreakdown} />
         </section>
+
+        {/* Activités */}
+        <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
+        <h2 className="text-2xl font-bold text-secondary mb-6">Activités recommandées</h2>
+        <DashboardActivitiesCarousel
+            steps={tripData.steps}
+            cities={tripData.cities}
+            activities={tripData.activities}
+        />
+        </section>
+
 
         {/* Météo */}
         <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
@@ -102,10 +120,7 @@ export default function Results() {
         <DashboardSocial cities={tripData.cities} />
         </section>
 
-        <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
-          <h2 className="text-xl font-semibold text-secondary mb-4">[Section : Visualisation graphique]</h2>
-          <p className="text-gray-400">À venir…</p>
-        </section>
+
       </div>
     </div>
   );
