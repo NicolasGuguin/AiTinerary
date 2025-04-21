@@ -92,7 +92,7 @@ export default function MyTrips() {
                     to={`/results/${trip.id}`}
                     className="px-6 py-2 rounded-xl bg-primary text-white hover:bg-secondary hover:text-black transition font-semibold"
                   >
-                    🧭 Voir ce voyage
+                    Voir ce voyage
                   </Link>
 
                   <button
