@@ -1,6 +1,5 @@
 require("dotenv").config();
 const OpenAI = require("openai");
-const { VercelRequest, VercelResponse } = require("@vercel/node");
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 module.exports = async function handler(req, res) {
