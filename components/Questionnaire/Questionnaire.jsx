@@ -61,12 +61,12 @@ export default function Questionnaire() {
   const startGeneration = async () => {
     console.log("🟡 Validation déclenchée !");
     setLoading(true);
-    setProgress(5);
-    setFakeProgress(5);
+    setProgress(0);
+    setFakeProgress(0);
     setCurrentStage("Initialisation…");
 
     try {
-      const result = await generateTripPipeline(formData, delayedProgress);
+      const result = await generateTripPipeline(formData, delayedProgress); 
       setProgress(100);
       setCurrentStage("✅ Finalisation…");
 

@@ -8,12 +8,11 @@ export default function DashboardSocial({ cities }) {
   const [videoIndex, setVideoIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(1);
   const scrollRef = useRef(null);
-  const cardWidth = 270; // Largeur fixe pour calculs
-  const API_KEY = "AIzaSyDO_UayqES07-0prT3Qo2FYSpzgfrSTLmo"; // Remplace par ta clé
+  const cardWidth = 270;
+  const API_KEY = "AIzaSyDO_UayqES07-0prT3Qo2FYSpzgfrSTLmo";
 
   const city = cities[index];
 
-  // Gère le nombre de cartes visibles
   useEffect(() => {
     const updateCardsPerView = () => {
       const width = window.innerWidth;
@@ -27,7 +26,6 @@ export default function DashboardSocial({ cities }) {
     return () => window.removeEventListener("resize", updateCardsPerView);
   }, []);
 
-  // Récupère les vidéos à chaque changement de ville
   useEffect(() => {
     const fetchVideos = async () => {
       const query = `${city.name} travel vlog`;
@@ -39,6 +37,7 @@ export default function DashboardSocial({ cities }) {
             q: query,
             type: "video",
             videoDuration: "short",
+            videoEmbeddable: "true",
             key: API_KEY,
           },
         });
@@ -53,7 +52,6 @@ export default function DashboardSocial({ cities }) {
     fetchVideos();
   }, [city]);
 
-  // Scroll horizontal précis
   const scroll = (dir) => {
     const total = videos.length;
     const maxIndex = Math.max(0, total - cardsPerView);
@@ -78,29 +76,27 @@ export default function DashboardSocial({ cities }) {
   };
 
   return (
-<div className="relative space-y-6 bg-[#121827] p-6 rounded-2xl shadow-inner">
+    <div className="relative space-y-6 bg-[#121827] p-6 rounded-2xl shadow-inner">
+      {/* Ville actuelle */}
+      <div className="flex items-center justify-center gap-4 relative">
+        <button
+          onClick={() => changeCity("left")}
+          className="bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all"
+        >
+          <MdChevronLeft size={24} />
+        </button>
 
-  {/* Ville actuelle */}
-  <div className="flex items-center justify-center gap-4 relative">
-    <button
-      onClick={() => changeCity("left")}
-      className="bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all"
-    >
-      <MdChevronLeft size={24} />
-    </button>
+        <h3 className="text-xl sm:text-2xl font-bold text-secondary">
+          📍 {city.name}
+        </h3>
 
-    <h3 className="text-xl sm:text-2xl font-bold text-secondary">
-      📍 {city.name}
-    </h3>
-
-    <button
-      onClick={() => changeCity("right")}
-      className="bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all"
-    >
-      <MdChevronRight size={24} />
-    </button>
-  </div>
-
+        <button
+          onClick={() => changeCity("right")}
+          className="bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all"
+        >
+          <MdChevronRight size={24} />
+        </button>
+      </div>
 
       {/* Carousel des vidéos */}
       <div className="relative w-full">
@@ -110,41 +106,41 @@ export default function DashboardSocial({ cities }) {
         >
           <MdChevronLeft />
         </button>
-        <div
-          ref={scrollRef}
-          className="overflow-hidden w-full px-10"
-        >
+
+        <div ref={scrollRef} className="overflow-hidden w-full px-10">
           <div className="flex transition-all gap-4">
             {videos.map((v) => (
-                <div
+              <div
                 key={v.id.videoId}
                 className="w-[260px] flex-shrink-0 rounded-2xl overflow-hidden shadow-xl relative group bg-[#1C2431] transition-transform duration-300 hover:scale-105"
-                >
+              >
                 <div className="relative h-[200px] overflow-hidden">
-                    <iframe
+                  <iframe
                     width="100%"
                     height="100%"
-                    src={`https://www.youtube.com/embed/${v.id.videoId}`}
-                    title={v.snippet.title}
+                    src={`https://www.youtube.com/embed/${v.id.videoId}?origin=${window.location.origin}`}
+                    title="YouTube video player"
                     frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                     className="rounded-t-2xl"
-                    ></iframe>
-                    {/* Overlay hover */}
-                    <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-50 transition duration-300 flex items-end">
-                    <div className="text-white p-3 text-sm font-medium line-clamp-2 w-full bg-gradient-to-t from-black/70 to-transparent">
-                        {v.snippet.title}
+                  ></iframe>
+
+                  {/* Overlay non bloquant */}
+                  <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-50 transition duration-300 flex items-end pointer-events-none">
+                    <div className="text-white p-3 text-sm font-medium line-clamp-2 w-full bg-gradient-to-t from-black/70 to-transparent pointer-events-none">
+                      {v.snippet.title}
                     </div>
-                    </div>
+                  </div>
                 </div>
                 <div className="p-3">
-                    <p className="text-xs text-gray-400">@{v.snippet.channelTitle}</p>
+                  <p className="text-xs text-gray-400">@{v.snippet.channelTitle}</p>
                 </div>
-                </div>
+              </div>
             ))}
           </div>
         </div>
+
         <button
           onClick={() => scroll("right")}
           className="absolute top-1/2 right-2 z-10 transform -translate-y-1/2 p-2 bg-primary text-white rounded-full shadow hover:bg-secondary hover:text-black"
@@ -153,20 +149,18 @@ export default function DashboardSocial({ cities }) {
         </button>
       </div>
 
-      {/* Petits points de pagination */}
-      <div className="flex justify-center mt-4">
-        <div className="flex justify-center mt-4 gap-1">
+      {/* Pagination */}
+      <div className="flex justify-center mt-4 gap-1">
         {Array.from({ length: Math.ceil(videos.length / cardsPerView) }, (_, i) => (
-            <div
+          <div
             key={i}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                i === Math.floor(videoIndex / cardsPerView)
+              i === Math.floor(videoIndex / cardsPerView)
                 ? "bg-primary shadow-[0_0_6px_rgba(244,63,94,0.8)] scale-110"
                 : "bg-gray-600 opacity-50"
             }`}
-            />
+          />
         ))}
-        </div>
       </div>
     </div>
   );

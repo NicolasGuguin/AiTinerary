@@ -18,63 +18,74 @@ module.exports = async function handler(req, res) {
   Générer une liste d'étapes journalières avec :
   - Le jour (day, entier commençant à 1)
   - L'identifiant de la ville (cityId, tel que fourni, **obligatoirement identique** à ceux listés ci-dessous)
-  - 📊 Nombre d’activités par jour :
-    - Si le voyage dure **moins de 6 jours** → 3 activités par jour
-    - Si le voyage dure **entre 6 et 15 jours** → 2 activités par jour
-    - Si le voyage dure **15 jours ou plus** → 1 seule activité par jour
+  - Une liste d'activités (voir règle ci-dessous)
   
-  Respecte strictement cette règle. Ne propose jamais plus d’activités que ce qui est prévu selon la durée.
+  ---
   
-  ### 🧾 Données du voyage :
-  - 📍 Destination : ${formData.destination}
-  - 📅 Date de départ : ${context.startDate}
-  - ⏱️ Durée : ${context.duration} jours
-  - 🧑 Nombre de voyageurs : ${formData.travelers}
-  - 💸 Budget global : ${formData.budget} €
-  - 😴 Confort : ${formData.comfort}
-  - 🚶‍♂️ Rythme : ${formData.rhythm} (lent, modéré, rapide)
-  - 🧭 Style recherché : ${formData.style.join(", ") || "non précisé"}
-  - 🚗 Transports disponibles : ${formData.transportPreferences.join(", ") || "non précisé"}
-  - 🚗 Temps de transport maximum entre chaque étape : ${formData.maxTravelDuration || "illimité"}
-  - 🌃 Vie nocturne : ${formData.nightlife}
-  - 🔁 Type de voyage : ${formData.circularTrip ? "circulaire" : "aller simple"}
-  - 🚫 Choses à éviter : ${formData.avoid || "aucune"}
-  - 🎯 Objectif principal : ${formData.purpose || "non précisé"}
+📊 Nombre d’activités par jour :  
+⚠️ Cette règle est OBLIGATOIRE :  
+- Moins de 6 jours → 3 activités par jour  
+- De 6 à 15 jours → 2 activités par jour  
+- 15 jours ou plus → 1 seule activité par jour  
   
-  ### 🗺️ Liste des villes disponibles :
-  ${context.cities.map((c, i) => `- ${c.name} (id: "${c.id}", lat: ${c.lat}, lng: ${c.lng})`).join("\n")}
-  
-  ⚠️ Chaque cityId doit correspondre **exactement** aux id ci-dessus. Pas d'accent, pas de majuscule, format kebab-case obligatoire.
-  
-  ### 📌 Contraintes à respecter :
-  1. Le rythme doit influencer le nombre de changements de ville.
-  2. Évite les longs trajets si le transport est limité (ex : à pied ou à vélo)
-  3. Distribue les jours de façon équilibrée selon les distances et le style
-  4. Respecte le style de voyage (ex : nature → randonnées, culturel → musées, festif → bars)
-  5. Pas de nightlife si "Non" ou "indifférent"
-  6. Si le voyage est circulaire, la dernière ville doit être identique ou proche de la première
-  7. Pas d'activités coûteuses si le budget est faible
-  8. Chaque journée doit être réaliste et agréable
-  9. Tu dois générer **exactement ${context.duration} jours** d'étapes (une par jour).
+Tu dois respecter cette règle à la lettre.  
+Chaque journée doit contenir EXACTEMENT le bon nombre d'activités selon la durée totale (${context.duration} jours dans ce cas).
 
   
-  ### 🧾 Format de réponse attendu (strictement) :
+  ⚠️ Tu dois appliquer cette règle à la lettre pour chaque journée. Ne la contourne JAMAIS.
+  
+  ---
+  
+  ### 🧾 Détails du voyage :
+  - Destination : ${formData.destination}
+  - Départ : ${context.startDate}
+  - Durée : ${context.duration} jours
+  - Voyageurs : ${formData.travelers}
+  - Budget : ${formData.budget} €
+  - Confort : ${formData.comfort}
+  - Rythme : ${formData.rhythm}
+  - Style : ${formData.style.join(", ") || "non précisé"}
+  - Transports : ${formData.transportPreferences.join(", ") || "non précisé"}
+  - Max transport par étape : ${formData.maxTravelDuration || "illimité"}
+  - Vie nocturne : ${formData.nightlife}
+  - Type de voyage : ${formData.circularTrip ? "circulaire" : "aller simple"}
+  - À éviter : ${formData.avoid || "aucune"}
+  - Objectif : ${formData.purpose || "non précisé"}
+  
+  ### 📍 Villes disponibles :
+  ${context.cities.map((c) => `- ${c.name} (id: "${c.id}", lat: ${c.lat}, lng: ${c.lng})`).join("\n")}
+  
+  ⚠️ Chaque cityId doit correspondre **exactement** à ceux listés ci-dessus (kebab-case, sans majuscules ni accents).
+  
+  ---
+  
+  ### 📌 Contraintes supplémentaires :
+  1. Génère **exactement ${context.duration} étapes** (une par jour).
+  2. L’enchaînement des villes doit être réaliste géographiquement (pas de zigzag).
+  3. Le style de voyage doit se refléter dans les activités.
+  4. La dernière ville doit être proche ou identique à la première si le voyage est circulaire.
+  5. Pas d’activités coûteuses si le budget est faible.
+  6. Pas de nightlife si “Non” ou “indifférent”.
+  7. Tu dois respecter strictement la règle du nombre d’activités par jour selon la durée du voyage.
+  ---
+  
+  ### 🧾 Format de réponse attendu :
   [
     {
       "day": 1,
       "cityId": "hanoi",
       "activities": [
         "Découverte du vieux quartier",
-        "Dégustation de street food vietnamienne",
-        "Croisière sur le lac Hoan Kiem"
+        "Dégustation de street food vietnamienne"
       ]
     },
     ...
   ]
   
-  ⚠️ Tu dois générer exactement ${context.duration} objets (1 par jour).
-  ⚠️ Ne réponds qu’avec le JSON pur, sans explication, sans commentaire.
+  ⚠️ Réponds uniquement avec le JSON pur, sans texte explicatif.
+  ⚠️ Génère exactement ${context.duration} objets (un pour chaque jour du voyage).
   `;
+  
   
   
 
@@ -83,13 +94,21 @@ module.exports = async function handler(req, res) {
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
     });
-
+  
     const raw = completion.choices[0].message.content;
-    const steps = JSON.parse(raw || "[]");
-
-    res.status(200).json(steps);
+    console.log("🟢 Réponse OpenAI:", raw); // 👉 log pour debug
+  
+    let parsed;
+    try {
+      parsed = JSON.parse(raw || "[]");
+    } catch (e) {
+      console.error("🔴 JSON.parse FAILED:", e);
+      return res.status(500).json({ error: "Erreur de parsing JSON dans generate-activities" });
+    }
+  
+    res.status(200).json(parsed);
   } catch (error) {
-    console.error("Erreur generate-steps:", error);
+    console.error("Erreur generate-activities:", error);
     res.status(500).json({ error: error.message });
-  }
+  } 
 };

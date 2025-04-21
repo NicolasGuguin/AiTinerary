@@ -28,40 +28,40 @@ module.exports = async function handler(req, res) {
   cities.forEach(c => { cityNames[c.id] = c.name; });
 
   const prompt = `
-  Tu es un assistant spécialisé dans les déplacements entre villes pendant un voyage.
-  
-  Voici les transitions à planifier :
-  ${transitions.map(t => `- Jour ${t.day} : de ${cityNames[t.from]} à ${cityNames[t.to]}`).join("\n")}
-  
-  Le voyageur autorise les transports suivants : ${transportPreferences.join(", ")}
-  
-  Pour chaque trajet, estime :
-  - le mode de transport le plus adapté parmi les options autorisées
-  - la durée (ex: "2h15")
-  - la distance en km (approximative)
-  - le prix moyen en euros (budget normal)
-  - Trajets limités à ${maxTravelDuration} en temps de transport si possible
-  - N'utilise **aucun trajet supérieur à 120% de ${maxTravelDuration}** sauf s’il **n’existe vraiment aucune alternative** parmi les moyens autorisés.
-  - Laisse le lien vide.
+Tu es un assistant spécialisé dans les déplacements entre villes pendant un voyage.
 
-  Réponds au format suivant :
-  
-  [
-    {
-      "day": 3,
-      "from": "hanoi",
-      "to": "sapa",
-      "mode": "Train",
-      "duration": "7h30",
-      "distance": 320,
-      "price": 18,
-      "link": ""
-    },
-    ...
-  ]
-  
-  ⚠️ Réponds uniquement avec ce JSON.
-  `;
+Voici les transitions à planifier :
+${transitions.map(t => `- Jour ${t.day} : de ${cityNames[t.from]} à ${cityNames[t.to]}`).join("\n")}
+
+⚠️ Le voyageur **autorise uniquement** les transports suivants : ${transportPreferences.join(", ")}.
+
+Pour chaque trajet, estime :
+- le mode de transport utilisé (doit être l’un des moyens autorisés)
+- la durée estimée (ex: "2h15")
+- la distance approximative (en km)
+- le prix moyen en euros (budget normal)
+- les trajets doivent respecter la durée maximale de ${maxTravelDuration}
+- Exception : tu peux dépasser jusqu’à 120% de cette durée **uniquement** si aucune alternative n'existe parmi les transports autorisés.
+
+Laisse le lien vide.
+
+Réponds au format strict suivant (uniquement le JSON, sans aucun commentaire) :
+
+[
+  {
+    "day": 3,
+    "from": "hanoi",
+    "to": "sapa",
+    "mode": "Train",
+    "duration": "7h30",
+    "distance": 320,
+    "price": 18,
+    "link": ""
+  },
+  ...
+]
+`;
+
   
 
   try {

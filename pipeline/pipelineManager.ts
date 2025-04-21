@@ -19,20 +19,20 @@ export async function generateTripPipeline(
   update(10, "context");
   const context = await getContext(formData);
   console.log("📅 Contexte généré :", context);
-  
-  update(25, "steps");
+
+  update(35, "steps");
   const steps = await generateSteps(context, formData);
 
-  update(40, "trajets");
+  update(55, "trajets");
   const trajets = await generateTrajets(steps, context.cities, formData.transportPreferences, formData.maxTravelDuration);
 
-  update(55, "activities");
+  update(75, "activities");
   const activities = await generateActivities(steps);
 
-  update(65, "meteo");
+  update(80, "meteo");
   const meteo = await getWeather(context.cities, context.startDate);
 
-  update(80, "flights");
+  update(85, "flights");
   const flights = await getFlights(context.countries, context.startDate, formData);
 
   update(90, "budget");
