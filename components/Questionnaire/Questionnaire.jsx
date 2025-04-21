@@ -87,7 +87,7 @@ export default function Questionnaire() {
         if (prev >= progress - 0.5) return prev;
         return +(prev + 0.5).toFixed(1); // Ajout fluide
       });
-    }, 300);    
+    }, 200);    
     return () => clearInterval(interval);
   }, [loading, progress]);
 
