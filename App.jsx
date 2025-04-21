@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import CreateTrip from "./pages/CreateTrip";
-import ViewTrip from "./pages/ViewTrip";
 import Header from "./components/Header";
 import Results from "./pages/Results"
 import LanternsBackground from "./components/LanternsBackground";
