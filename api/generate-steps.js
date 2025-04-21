@@ -22,17 +22,16 @@ module.exports = async function handler(req, res) {
   
   ---
   
-📊 Nombre d’activités par jour :  
-⚠️ Cette règle est OBLIGATOIRE :  
-- Moins de 6 jours → 3 activités par jour  
-- De 6 à 15 jours → 2 activités par jour  
-- 15 jours ou plus → 1 seule activité par jour  
+  📊 Nombre d’activités par jour :  
+  ⚠️ Cette règle est OBLIGATOIRE :  
+  - Moins de 6 jours → 3 activités par jour  
+  - De 6 à 15 jours → 2 activités par jour  
+  - 15 jours ou plus → 1 seule activité par jour  
   
-Tu dois respecter cette règle à la lettre.  
-Chaque journée doit contenir EXACTEMENT le bon nombre d'activités selon la durée totale (${context.duration} jours dans ce cas).
-
+  Tu dois respecter cette règle à la lettre.  
+  Chaque journée doit contenir **EXACTEMENT** le bon nombre d'activités selon la durée totale (${context.duration} jours).
   
-  ⚠️ Tu dois appliquer cette règle à la lettre pour chaque journée. Ne la contourne JAMAIS.
+  ⚠️ Ne contourne jamais cette règle, même si cela te semble pertinent.
   
   ---
   
@@ -60,13 +59,18 @@ Chaque journée doit contenir EXACTEMENT le bon nombre d'activités selon la dur
   ---
   
   ### 📌 Contraintes supplémentaires :
+  
   1. Génère **exactement ${context.duration} étapes** (une par jour).
-  2. L’enchaînement des villes doit être réaliste géographiquement (pas de zigzag).
-  3. Le style de voyage doit se refléter dans les activités.
-  4. La dernière ville doit être proche ou identique à la première si le voyage est circulaire.
+  2. L’enchaînement des villes doit suivre une **logique géographique fluide**.
+     - Le voyage doit progresser naturellement dans l’espace, sans zigzags ni retours inutiles.
+     - ⚠️ Interdiction stricte de faire "ville A → ville B → ville A → ville B"
+     - Exemple à éviter : "Paris → Marseille → Paris → Nice"
+  3. La dernière ville doit être identique ou proche de la première uniquement si le voyage est circulaire.
+  4. Le style de voyage (nature, festif, culturel, etc.) doit être respecté dans le choix des activités.
   5. Pas d’activités coûteuses si le budget est faible.
-  6. Pas de nightlife si “Non” ou “indifférent”.
-  7. Tu dois respecter strictement la règle du nombre d’activités par jour selon la durée du voyage.
+  6. Pas de nightlife si "non" ou "indifférent".
+  7. Tu dois respecter strictement le **nombre exact d’activités par jour** selon la règle définie plus haut.
+  
   ---
   
   ### 🧾 Format de réponse attendu :

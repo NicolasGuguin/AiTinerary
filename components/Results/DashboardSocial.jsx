@@ -108,7 +108,7 @@ export default function DashboardSocial({ cities }) {
         </button>
 
         <div ref={scrollRef} className="overflow-hidden w-full px-10">
-          <div className="flex transition-all gap-4">
+        <div className="flex transition-all gap-4 justify-center sm:justify-start">
             {videos.map((v) => (
               <div
                 key={v.id.videoId}
