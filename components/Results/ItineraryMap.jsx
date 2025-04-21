@@ -124,19 +124,21 @@ export default function ItineraryMap({ steps, cities }) {
 
   return (
     <div className="space-y-4 relative z-10">
-      <div className="flex justify-between">
-        <button
-          onClick={() => setIsFullscreen(true)}
-          className="px-4 py-2 text-sm rounded bg-primary text-white hover:bg-secondary hover:text-black transition-all"
-        >
-          Agrandir la carte
-        </button>
-        <button
-          onClick={startReplay}
-          className="px-4 py-2 text-sm rounded bg-secondary text-black hover:bg-primary hover:text-white transition-all"
-        >
-          ▶ Rejouer l’itinéraire
-        </button>
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4">
+      <button
+        onClick={() => setIsFullscreen(true)}
+        className="w-full sm:w-auto px-4 py-2 text-sm rounded bg-primary text-white hover:bg-secondary hover:text-black transition-all"
+      >
+        Agrandir la carte
+      </button>
+
+      <button
+        onClick={startReplay}
+        className="w-full sm:w-auto px-4 py-2 text-sm rounded bg-secondary text-black hover:bg-primary hover:text-white transition-all"
+      >
+        ▶ Rejouer l’itinéraire
+      </button>
+
       </div>
 
       <MapContainer

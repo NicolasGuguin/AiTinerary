@@ -18,17 +18,21 @@ export default function DailyCardsCarousel({ steps, cities }) {
   // Chargement des images
   useEffect(() => {
     const uniqueCityIds = [...new Set(steps.map((step) => step.cityId))];
-
+  
     uniqueCityIds.forEach((cityId) => {
       const city = getCityById(cityId);
       if (!city || imagesMap[city.name]) return;
-
-      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(city.name)}&per_page=1`, {
+  
+      const page = Math.floor(Math.random() * 3) + 1; // page 1 à 3
+  
+      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(city.name + " travel")}&per_page=15&page=${page}`, {
         headers: { Authorization: API_KEY },
       })
         .then((res) => res.json())
         .then((data) => {
-          const url = data.photos?.[0]?.src?.medium || "https://source.unsplash.com/400x300/?travel,tourism";
+          const photos = data.photos || [];
+          const randomIndex = Math.floor(Math.random() * photos.length);
+          const url = photos[randomIndex]?.src?.medium || "https://source.unsplash.com/400x300/?travel,tourism";
           setImagesMap((prev) => ({ ...prev, [city.name]: url }));
         })
         .catch(() => {
@@ -39,6 +43,8 @@ export default function DailyCardsCarousel({ steps, cities }) {
         });
     });
   }, [steps, cities, imagesMap]);
+  
+  
 
   // Auto scroll
   useEffect(() => {
@@ -110,8 +116,12 @@ export default function DailyCardsCarousel({ steps, cities }) {
                 </div>
                 <h3 className="text-secondary text-sm font-semibold mb-1">Jour {step.day}</h3>
                 <p className="text-lg font-bold text-white mb-1">{city.name}</p>
-                {step.activities && (
-                  <p className="text-sm text-gray-400">{step.activities[0]}</p>
+                {step.activities && step.activities.length > 0 && (
+                <ul className="text-sm text-gray-300 list-disc list-inside space-y-1 mt-2">
+                    {step.activities.map((activity, idx) => (
+                    <li key={idx}>{activity}</li>
+                    ))}
+                </ul>
                 )}
               </motion.div>
             );

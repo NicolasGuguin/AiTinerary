@@ -28,12 +28,25 @@ export default function DashboardFlights({ flights }) {
         </p>
         <p className="text-lg font-semibold text-white mt-2">{flight.price} €</p>
       </div>
-      <button
-        className="mt-4 bg-primary text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-secondary hover:text-black transition"
-      >
-        Réserver
-        <ArrowRight size={16} />
-      </button>
+      {flight.link ? (
+        <a
+            href={flight.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 bg-primary text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-secondary hover:text-black transition text-center justify-center"
+        >
+            Réserver
+            <ArrowRight size={16} />
+        </a>
+        ) : (
+        <button
+            disabled
+            className="mt-4 bg-gray-600 text-white px-4 py-2 rounded-md flex items-center gap-2 cursor-not-allowed opacity-60"
+        >
+            Lien indisponible
+        </button>
+        )}
+
     </div>
   );
 
