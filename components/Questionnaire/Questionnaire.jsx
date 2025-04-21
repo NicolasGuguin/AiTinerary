@@ -84,10 +84,10 @@ export default function Questionnaire() {
     if (!loading) return;
     const interval = setInterval(() => {
       setFakeProgress((prev) => {
-        if (prev >= progress - 1) return prev;
-        return prev + 1;
+        if (prev >= progress - 0.5) return prev;
+        return +(prev + 0.5).toFixed(1); // Ajout fluide
       });
-    }, 100);
+    }, 300);    
     return () => clearInterval(interval);
   }, [loading, progress]);
 

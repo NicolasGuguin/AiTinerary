@@ -17,7 +17,6 @@ export async function getContext(formData: FormData): Promise<Context> {
   if (!res.ok) throw new Error("Erreur API");
 
   const parsed = await res.json();
-
   return {
     countries: parsed.countries,
     cities: parsed.cities,

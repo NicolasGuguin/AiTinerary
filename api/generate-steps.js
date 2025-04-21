@@ -17,13 +17,13 @@ module.exports = async function handler(req, res) {
   ### 🎯 Objectif :
   Générer une liste d'étapes journalières avec :
   - Le jour (day, entier commençant à 1)
-  - L'identifiant de la ville (cityId, tel que fourni)
+  - L'identifiant de la ville (cityId, tel que fourni, **obligatoirement identique** à ceux listés ci-dessous)
   - 📊 Nombre d’activités par jour :
-- Si le voyage dure **moins de 6 jours** → 3 activités par jour
-- Si le voyage dure **entre 6 et 15 jours** → 2 activités par jour
-- Si le voyage dure **15 jours ou plus** → 1 seule activité par jour
-
-Respecte strictement cette règle. Ne propose jamais plus d’activités que ce qui est prévu selon la durée.
+    - Si le voyage dure **moins de 6 jours** → 3 activités par jour
+    - Si le voyage dure **entre 6 et 15 jours** → 2 activités par jour
+    - Si le voyage dure **15 jours ou plus** → 1 seule activité par jour
+  
+  Respecte strictement cette règle. Ne propose jamais plus d’activités que ce qui est prévu selon la durée.
   
   ### 🧾 Données du voyage :
   - 📍 Destination : ${formData.destination}
@@ -41,22 +41,22 @@ Respecte strictement cette règle. Ne propose jamais plus d’activités que ce 
   - 🚫 Choses à éviter : ${formData.avoid || "aucune"}
   - 🎯 Objectif principal : ${formData.purpose || "non précisé"}
   
-  
   ### 🗺️ Liste des villes disponibles :
   ${context.cities.map((c, i) => `- ${c.name} (id: "${c.id}", lat: ${c.lat}, lng: ${c.lng})`).join("\n")}
   
+  ⚠️ Chaque cityId doit correspondre **exactement** aux id ci-dessus. Pas d'accent, pas de majuscule, format kebab-case obligatoire.
+  
   ### 📌 Contraintes à respecter :
-  1. **Le rythme doit influencer le nombre de changements de ville** :
-     - Chill → 1 villes différents par semaine
-     - Modéré → 2  villes différentes par semaine
-     - Intensif → jusqu'à 3-4 villes différentes par semaine
-  2. **Évite les longs trajets si le transport est limité** (ex : à pied ou à vélo)
-  3. **Distribue les jours de façon équilibrée** selon les distances et le style
-  4. **Respecte le style de voyage** (ex : nature → randonnées, culturel → musées, festif → bars)
-  5. **Pas de nightlife si "Non" ou "indifférent"**
-  6. Si le voyage est **circulaire**, la dernière ville doit être identique ou proche de la première
-  7. **Pas d'activités coûteuses si le budget est faible**
-  8. Chaque journée doit être **réaliste et agréable** selon la durée du séjour.
+  1. Le rythme doit influencer le nombre de changements de ville.
+  2. Évite les longs trajets si le transport est limité (ex : à pied ou à vélo)
+  3. Distribue les jours de façon équilibrée selon les distances et le style
+  4. Respecte le style de voyage (ex : nature → randonnées, culturel → musées, festif → bars)
+  5. Pas de nightlife si "Non" ou "indifférent"
+  6. Si le voyage est circulaire, la dernière ville doit être identique ou proche de la première
+  7. Pas d'activités coûteuses si le budget est faible
+  8. Chaque journée doit être réaliste et agréable
+  9. Tu dois générer **exactement ${context.duration} jours** d'étapes (une par jour).
+
   
   ### 🧾 Format de réponse attendu (strictement) :
   [
@@ -72,8 +72,10 @@ Respecte strictement cette règle. Ne propose jamais plus d’activités que ce 
     ...
   ]
   
+  ⚠️ Tu dois générer exactement ${context.duration} objets (1 par jour).
   ⚠️ Ne réponds qu’avec le JSON pur, sans explication, sans commentaire.
   `;
+  
   
 
   try {

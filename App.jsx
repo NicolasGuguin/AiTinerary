@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import CreateTrip from "./pages/CreateTrip";
 import Header from "./components/Header";
 import Results from "./pages/Results"
+import MyTrips from "./pages/MyTrips";
 import LanternsBackground from "./components/LanternsBackground";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<CreateTrip />} />
         <Route path="/results" element={<Results />} />
+        <Route path="/my-trips" element={<MyTrips />} />
       </Routes>
     
     </div>

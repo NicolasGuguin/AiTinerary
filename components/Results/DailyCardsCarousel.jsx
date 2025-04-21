@@ -23,7 +23,7 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
       const city = getCityById(cityId);
       if (!city || imagesMap[city.name]) return;
 
-      const page = Math.floor(Math.random() * 4) + 1; // page 1 à 4
+      const page = Math.floor(Math.random() * 3) + 1; // page 1 à 3
       const country = tripData.countries[0];      
       const query = `${city.name} ${country || ""} travel`;
       fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=15&page=${page}`, {

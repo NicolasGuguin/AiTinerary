@@ -41,6 +41,7 @@ module.exports = async function handler(req, res) {
   - la distance en km (approximative)
   - le prix moyen en euros (budget normal)
   - Trajets limités à ${maxTravelDuration} en temps de transport si possible
+  - N'utilise **aucun trajet supérieur à 120% de ${maxTravelDuration}** sauf s’il **n’existe vraiment aucune alternative** parmi les moyens autorisés.
   - Laisse le lien vide.
 
   Réponds au format suivant :

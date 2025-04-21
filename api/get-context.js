@@ -38,6 +38,7 @@ module.exports = async function handler(req, res) {
   4. L’itinéraire doit respecter le style demandé (nature, culturel, festif, etc.)
   5. Ne propose pas de destinations très coûteuses si le budget est restreint.
   6. La vie nocturne doit être présente uniquement si souhaitée.
+  7. ⚠️ **Le champ id pour chaque ville doit être au format kebab-case, sans majuscules ni accents** (ex: "ho-chi-minh-city", "hue", "la-paz").
   
   ### Format attendu (obligatoire) :
   {
@@ -48,8 +49,9 @@ module.exports = async function handler(req, res) {
     ]
   }
   
-  Réponds **uniquement avec ce JSON**, sans autre texte.
+  ⚠️ Réponds uniquement avec ce JSON, sans autre texte.
   `;
+  
 
   try {
     const completion = await openai.chat.completions.create({

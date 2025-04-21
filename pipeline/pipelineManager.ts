@@ -18,7 +18,8 @@ export async function generateTripPipeline(
   
   update(10, "context");
   const context = await getContext(formData);
-
+  console.log("📅 Contexte généré :", context);
+  
   update(25, "steps");
   const steps = await generateSteps(context, formData);
 
