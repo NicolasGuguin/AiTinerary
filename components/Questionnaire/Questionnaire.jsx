@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BasicInfo from "./BasicInfo";
 import BudgetComfort from "./BudgetComfort";
 import StyleTransport from "./StyleTransport";
@@ -19,6 +19,7 @@ export default function Questionnaire() {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [fakeProgress, setFakeProgress] = useState(0);
   const [currentStage, setCurrentStage] = useState("");
 
   const [formData, setFormData] = useState({
@@ -39,6 +40,7 @@ export default function Questionnaire() {
     roomType: "private",
     noLodgingNeeded: false,
     rooms: "",
+    maxTravelDuration: "illimité",
   });
 
   const StepComponent = steps[step].component;
@@ -51,19 +53,16 @@ export default function Questionnaire() {
     if (step > 0 && !loading) setStep(step - 1);
   };
 
-
   const delayedProgress = (value, label) => {
     setCurrentStage(stageLabels[label]);
     setProgress((prev) => Math.max(prev + 8, value));
   };
-  
-  
-  
 
   const startGeneration = async () => {
     console.log("🟡 Validation déclenchée !");
     setLoading(true);
     setProgress(5);
+    setFakeProgress(5);
     setCurrentStage("Initialisation…");
 
     try {
@@ -80,43 +79,56 @@ export default function Questionnaire() {
     }
   };
 
+  // Animation continue fluide du fakeProgress vers progress réel
+  useEffect(() => {
+    if (!loading) return;
+    const interval = setInterval(() => {
+      setFakeProgress((prev) => {
+        if (prev >= progress - 1) return prev;
+        return prev + 1;
+      });
+    }, 100);
+    return () => clearInterval(interval);
+  }, [loading, progress]);
+
   return (
     <div className="bg-card p-8 rounded-2xl shadow-xl space-y-8 transition-all duration-300 max-w-2xl mx-auto min-h-[500px]">
-      {/* Barre de progression */}
-      <div className="w-full bg-background h-2 rounded-full overflow-hidden">
-        <div
-          className="bg-primary h-full transition-all duration-500 ease-out"
-          style={{
-            width: loading
-              ? `${progress}%`
-              : `${((step + 1) / steps.length) * 100}%`,
-          }}
-        />
-      </div>
+      {/* Barre de progression du formulaire */}
+      {!loading && (
+        <div className="w-full bg-background h-2 rounded-full overflow-hidden">
+          <div
+            className="bg-primary h-full transition-all duration-500 ease-out"
+            style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+          />
+        </div>
+      )}
 
-      {/* Titre ou loading */}
+      {/* Titre de l'étape ou chargement */}
       <h2 className="text-3xl font-bold text-primary">
         {loading ? "Génération en cours..." : steps[step].label}
       </h2>
 
-      {/* Corps du formulaire ou loading */}
+      {/* Contenu */}
       <div className="space-y-6">
         {loading ? (
           <div className="flex flex-col items-center justify-center space-y-6 text-white mt-12">
-            {/* Spinner */}
+            {/* Spinner animé */}
             <div className="w-12 h-12 border-4 border-t-transparent border-primary rounded-full animate-spin"></div>
 
-            {/* Texte de progression */}
             <div className="text-lg font-semibold">{currentStage}</div>
 
-            {/* Barre */}
+            {/* Barre de chargement */}
             <div className="w-full bg-background h-2 rounded-full overflow-hidden max-w-md">
               <div
                 className="bg-primary h-full transition-all duration-300 ease-in-out"
-                style={{ width: `${progress}%` }}
+                style={{ width: `${Math.min(fakeProgress, 100)}%` }}
               />
             </div>
-            <div className="text-sm text-secondary font-medium">{progress}%</div>
+
+            <div className="text-sm text-secondary font-medium">
+              {Math.floor(fakeProgress)}%
+            </div>
+
             <div className="text-sm text-gray-400 text-center max-w-sm">
               Cela peut prendre jusqu’à 3 minutes. Merci de patienter pendant que nous construisons votre voyage idéal.
             </div>

@@ -14,6 +14,8 @@ module.exports = async function handler(req, res) {
     const totalDays = steps.length;
     const nbTrajets = trajets.length;
     const flightInfo = flights?.outbound?.length > 0 ? "Oui" : "Non";
+    const estimatedTransportCost = trajets.reduce((sum, t) => sum + (t.price || 0), 0);
+
 
 const prompt = `
 Tu es un expert en estimation budgétaire pour des voyages organisés.
@@ -24,6 +26,7 @@ Tu es un expert en estimation budgétaire pour des voyages organisés.
 - Vols inclus : ${flightInfo}
 - Nombre de trajets terrestres : ${nbTrajets}
 - Moyens de transport utilisés : ${formData.transportPreferences.join(", ") || "non précisé"}
+- Budget transport estimé : ${estimatedTransportCost} €
 - Niveau de confort : ${formData.comfort}
 - Type de logement : ${formData.roomType}${formData.noLodgingNeeded ? " (hébergement non nécessaire)" : ""}
 - Style de voyage : ${formData.style.join(", ") || "non précisé"}
@@ -51,8 +54,7 @@ Format attendu :
   { "label": "Nourriture", "value": 190 },
   ...
 ]
-
-⚠️ Le total doit être exactement ${totalBudget} €.  
+ 
 ⚠️ Réponds uniquement avec le JSON, sans texte explicatif.
 `;
 

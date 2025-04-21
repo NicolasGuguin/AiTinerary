@@ -16,6 +16,7 @@ export type FormData = {
     roomType: string;
     noLodgingNeeded: boolean;
     rooms: string;
+    maxTravelDuration: string;
   };
   
   export type City = { id: string; name: string; lat: number; lng: number };
@@ -37,6 +38,7 @@ export type FormData = {
     duration: string;
     distance: number;
     price: number;
+    link: string;
   };
   
   export type Weather = {

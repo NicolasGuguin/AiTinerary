@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Méthode non autorisée" });
   }
 
-  const { steps, cities, transportPreferences } = req.body;
+  const { steps, cities, transportPreferences, maxTravelDuration  } = req.body;
 
   // Reconstituer les trajets à estimer (dès qu'une ville change)
   const transitions = [];
@@ -29,36 +29,40 @@ module.exports = async function handler(req, res) {
   cities.forEach(c => { cityNames[c.id] = c.name; });
 
   const prompt = `
-Tu es un assistant spécialisé dans les déplacements entre villes pendant un voyage.
-
-Voici les transitions à planifier :
-${transitions.map(t => `- Jour ${t.day} : de ${cityNames[t.from]} à ${cityNames[t.to]}`).join("\n")}
-
-Le voyageur autorise les transports suivants : ${transportPreferences.join(", ")}
-
-Pour chaque trajet, estime :
-- le mode de transport le plus adapté parmi les options autorisées
-- la durée (ex: "2h15")
-- la distance en km (approximative)
-- le prix moyen en euros (budget normal)
-
-Réponds au format suivant :
-
-[
-  {
-    "day": 3,
-    "from": "hanoi",
-    "to": "sapa",
-    "mode": "Train",
-    "duration": "7h30",
-    "distance": 320,
-    "price": 18
-  },
-  ...
-]
-
-⚠️ Réponds uniquement avec ce JSON.
+  Tu es un assistant spécialisé dans les déplacements entre villes pendant un voyage.
+  
+  Voici les transitions à planifier :
+  ${transitions.map(t => `- Jour ${t.day} : de ${cityNames[t.from]} à ${cityNames[t.to]}`).join("\n")}
+  
+  Le voyageur autorise les transports suivants : ${transportPreferences.join(", ")}
+  
+  Pour chaque trajet, estime :
+  - le mode de transport le plus adapté parmi les options autorisées
+  - la durée (ex: "2h15")
+  - la distance en km (approximative)
+  - le prix moyen en euros (budget normal)
+  - Trajets limités à ${maxTravelDuration} en temps de transport si possible
+  - Laisse le lien vide.
+  
+  Réponds au format suivant :
+  
+  [
+    {
+      "day": 3,
+      "from": "hanoi",
+      "to": "sapa",
+      "mode": "Train",
+      "duration": "7h30",
+      "distance": 320,
+      "price": 18,
+      "link": ""
+    },
+    ...
+  ]
+  
+  ⚠️ Réponds uniquement avec ce JSON.
   `;
+  
 
   try {
     const completion = await openai.chat.completions.create({

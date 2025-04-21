@@ -73,7 +73,7 @@ export default function Results() {
         {/* Carrousel jour par jour */}
         <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-2xl font-bold text-secondary mb-6">Votre parcours jour par jour</h2>
-          <DailyCardsCarousel steps={steps} cities={cities} />
+          <DailyCardsCarousel steps={steps} cities={cities} tripData={tripData} />
         </section>
 
         {/* Trajets */}

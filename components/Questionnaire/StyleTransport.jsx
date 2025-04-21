@@ -1,6 +1,6 @@
 export default function StyleTransport({ formData, setFormData }) {
-    const styles = ["culture", "aventure", "détente", "gastronomie", "photo", "nature"];
-    const transports = ["train", "voiture", "avion", "bus", "marche", "vélo"];
+    const styles = ["culture", "aventure", "détente", "gastronomie", "photo", "nature", "immersion", "plage", "randonnée","festif"];
+    const transports = ["train", "voiture", "avion", "bus", "marche", "vélo", "bateau", "taxi", "scooter"];
   
     const toggle = (field, value) => {
       setFormData((prev) => {
@@ -74,6 +74,24 @@ export default function StyleTransport({ formData, setFormData }) {
             ))}
           </div>
         </div>
+        <div>
+            <label className="block text-sm text-secondary font-semibold mb-2">
+                Durée maximale d'un trajet
+            </label>
+            <select
+                className="w-full bg-[#1E293B] text-white px-5 py-4 rounded-xl border border-transparent focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                value={formData.maxTravelDuration}
+                onChange={(e) =>
+                setFormData({ ...formData, maxTravelDuration: e.target.value })
+                }
+            >
+                <option value="illimité">Peu importe</option>
+                <option value="4h">Maximum 4h</option>
+                <option value="6h">Maximum 6h</option>
+                <option value="10h">Maximum 10h</option>
+                <option value="20h">Maximum 20h</option>
+            </select>
+            </div>
       </div>
     );
   }

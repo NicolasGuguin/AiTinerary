@@ -20,9 +20,11 @@ module.exports = async function handler(req, res) {
   - Le jour (day, entier commençant à 1)
   - L'identifiant de la ville (cityId, tel que fourni)
   - 📊 Nombre d’activités par jour :
-- Si le voyage dure **moins de 8 jours** → 3 activités par jour
-- Si le voyage dure **entre 8 et 17 jours** → 2 activités par jour
-- Si le voyage dure **18 jours ou plus** → 1 seule activité par jour
+- Si le voyage dure **moins de 6 jours** → 3 activités par jour
+- Si le voyage dure **entre 6 et 15 jours** → 2 activités par jour
+- Si le voyage dure **15 jours ou plus** → 1 seule activité par jour
+
+Respecte strictement cette règle. Ne propose jamais plus d’activités que ce qui est prévu selon la durée.
   
   ### 🧾 Données du voyage :
   - 📍 Destination : ${formData.destination}
@@ -34,10 +36,12 @@ module.exports = async function handler(req, res) {
   - 🚶‍♂️ Rythme : ${formData.rhythm} (lent, modéré, rapide)
   - 🧭 Style recherché : ${formData.style.join(", ") || "non précisé"}
   - 🚗 Transports disponibles : ${formData.transportPreferences.join(", ") || "non précisé"}
+  - 🚗 Temps de transport maximum entre chaque étape : ${formData.maxTravelDuration || "illimité"}
   - 🌃 Vie nocturne : ${formData.nightlife}
   - 🔁 Type de voyage : ${formData.circularTrip ? "circulaire" : "aller simple"}
   - 🚫 Choses à éviter : ${formData.avoid || "aucune"}
   - 🎯 Objectif principal : ${formData.purpose || "non précisé"}
+  
   
   ### 🗺️ Liste des villes disponibles :
   ${context.cities.map((c, i) => `- ${c.name} (id: "${c.id}", lat: ${c.lat}, lng: ${c.lng})`).join("\n")}
@@ -53,7 +57,7 @@ module.exports = async function handler(req, res) {
   5. **Pas de nightlife si "Non" ou "indifférent"**
   6. Si le voyage est **circulaire**, la dernière ville doit être identique ou proche de la première
   7. **Pas d'activités coûteuses si le budget est faible**
-  8. Chaque journée doit être faisable : 3 activités **locales et réalistes**
+  8. Chaque journée doit être **réaliste et agréable** selon la durée du séjour.
   
   ### 🧾 Format de réponse attendu (strictement) :
   [
@@ -75,7 +79,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
     });
 

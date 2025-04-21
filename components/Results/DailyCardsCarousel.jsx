@@ -3,7 +3,7 @@ import { useMapContext } from "../../context/MapContext";
 import { motion } from "framer-motion";
 import { apiKeys } from "../../config/apiKeys";
 
-export default function DailyCardsCarousel({ steps, cities }) {
+export default function DailyCardsCarousel({ steps, cities, tripData }) {
   const { isFullscreen } = useMapContext();
   const AUTO_SCROLL = true;
   const AUTO_SCROLL_INTERVAL = 10000;
@@ -22,10 +22,12 @@ export default function DailyCardsCarousel({ steps, cities }) {
     uniqueCityIds.forEach((cityId) => {
       const city = getCityById(cityId);
       if (!city || imagesMap[city.name]) return;
-  
-      const page = Math.floor(Math.random() * 3) + 1; // page 1 à 3
-  
-      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(city.name + " travel")}&per_page=15&page=${page}`, {
+
+      const page = Math.floor(Math.random() * 4) + 1; // page 1 à 4
+      const country = tripData.countries[0];      
+      const query = `${city.name} ${country || ""} travel`;
+      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=15&page=${page}`, {
+      
         headers: { Authorization: API_KEY },
       })
         .then((res) => res.json())

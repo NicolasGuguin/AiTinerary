@@ -23,7 +23,7 @@ export async function generateTripPipeline(
   const steps = await generateSteps(context, formData);
 
   update(40, "trajets");
-  const trajets = await generateTrajets(steps, context.cities, formData.transportPreferences);
+  const trajets = await generateTrajets(steps, context.cities, formData.transportPreferences, formData.maxTravelDuration);
 
   update(55, "activities");
   const activities = await generateActivities(steps);
