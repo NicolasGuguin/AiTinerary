@@ -17,6 +17,11 @@ export default function MyTrips() {
     navigate("/results", { state: lastTrip });
   };
 
+  const handleDelete = () => {
+    localStorage.removeItem("lastTripData");
+    setLastTrip(null);
+  };
+
   return (
     <div className="px-4 py-10 max-w-5xl mx-auto space-y-10 text-white">
       <h1 className="text-4xl font-extrabold text-primary text-center">
@@ -41,12 +46,22 @@ export default function MyTrips() {
                   <strong>Étapes</strong> : {lastTrip.steps?.length || 0}
                 </span>
               </p>
-              <button
-                onClick={handleLoad}
-                className="inline-block mt-2 px-6 py-2 rounded-xl bg-primary text-white hover:bg-secondary hover:text-black transition font-semibold"
-              >
-                🧭 Voir ce voyage
-              </button>
+
+              <div className="flex flex-wrap gap-3 pt-2">
+                <button
+                  onClick={handleLoad}
+                  className="px-6 py-2 rounded-xl bg-primary text-white hover:bg-secondary hover:text-black transition font-semibold"
+                >
+                  🧭 Voir ce voyage
+                </button>
+
+                <button
+                  onClick={handleDelete}
+                  className="px-6 py-2 rounded-xl bg-red-600 text-white hover:bg-red-500 transition font-semibold"
+                >
+                  🗑️ Supprimer
+                </button>
+              </div>
             </div>
 
             <div className="w-full md:w-1/2 rounded-xl overflow-hidden">

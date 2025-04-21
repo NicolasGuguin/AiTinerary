@@ -20,11 +20,12 @@ module.exports = async function handler(req, res) {
   - Destination cible : ${formData.destination}
   - Durée totale : ${formData.duration} jours
   - Style de voyage préféré : ${formData.style.length > 0 ? formData.style.join(", ") : "non précisé"}
-  - Rythme souhaité : ${formData.rhythm} (ex. : "lent" = 2-3 étapes sur tout le voyage, "rapide" = jusqu'à 8-10 villes)
+  - Rythme souhaité : ${formData.rhythm}
   - Type de voyage : ${formData.circularTrip ? "voyage circulaire" : "voyage aller simple"}
   - Budget global : ${formData.budget ? formData.budget + " €" : "non précisé"}
   - Moyens de transport autorisés : ${formData.transportPreferences.length > 0 ? formData.transportPreferences.join(", ") : "non précisé"}
-  - Vie nocturne : ${formData.nightlife} (par exemple : "active", "calme", "indifférent")
+  - Temps de transport maximum : ${formData.maxTravelDuration || "illimité"}
+  - Vie nocturne : ${formData.nightlife} (par exemple : "Oui", "Non", "Peu importe")
   - Éléments à éviter absolument : ${formData.avoid || "aucun"}
   - Objectif du voyage : ${formData.purpose || "non précisé"}
   
@@ -39,6 +40,8 @@ module.exports = async function handler(req, res) {
   5. Ne propose pas de destinations très coûteuses si le budget est restreint.
   6. La vie nocturne doit être présente uniquement si souhaitée.
   7. ⚠️ **Le champ id pour chaque ville doit être au format kebab-case, sans majuscules ni accents** (ex: "ho-chi-minh-city", "hue", "la-paz").
+  8. **L’enchaînement des villes doit être géographiquement cohérent** pour éviter les allers-retours ou zigzags inutiles. Par exemple, en France, un itinéraire comme "Paris → Brest → Nice → Nantes → Marseille" n’a aucun sens.
+  9. **Fais passer l’itinéraire par des points d’intérêt touristiques majeurs** lorsque c’est pertinent et compatible avec les préférences du voyageur.
   
   ### Format attendu (obligatoire) :
   {
@@ -51,6 +54,7 @@ module.exports = async function handler(req, res) {
   
   ⚠️ Réponds uniquement avec ce JSON, sans autre texte.
   `;
+  
   
 
   try {
