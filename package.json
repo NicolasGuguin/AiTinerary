@@ -7,6 +7,7 @@
     "generate:trip": "tsx scripts/runPipeline.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
     "axios": "^1.8.4",
     "chart.js": "^4.4.9",
     "dotenv": "^16.5.0",

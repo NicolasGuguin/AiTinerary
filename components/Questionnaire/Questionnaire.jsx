@@ -6,6 +6,9 @@ import ExtraOptions from "./ExtraOptions";
 import { useNavigate } from "react-router-dom";
 import { stageLabels } from "../../constants";
 import { generateTripPipeline } from "../../pipeline/pipelineManager";
+import { supabase } from "../../lib/supabaseClient";
+import { useAuth } from "../../context/AuthContext";
+
 
 const steps = [
   { label: "Infos de base", component: BasicInfo },
@@ -16,6 +19,7 @@ const steps = [
 
 export default function Questionnaire() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -69,6 +73,23 @@ export default function Questionnaire() {
       const result = await generateTripPipeline(formData, delayedProgress); 
       setProgress(100);
       setCurrentStage("✅ Finalisation…");
+      console.log("user:", user);
+
+      if (user) {
+        console.log("Tentative d'enregistrement Supabase", user.id);
+      
+        const { error } = await supabase.from("trips").insert({
+          user_id: user.id,
+          trip_data: result,
+        });
+      
+        if (error) {
+          console.error("Erreur lors de l'enregistrement Supabase :", error);
+        } else {
+          console.log("✅ Voyage enregistré avec succès !");
+        }
+      }
+      
 
       setTimeout(() => {
         navigate("/results", { state: result });
@@ -84,9 +105,9 @@ export default function Questionnaire() {
     if (!loading) return;
     const interval = setInterval(() => {
       setFakeProgress((prev) => {
-        if (prev >= progress - 0.5) return prev;
-        return +(prev + 0.5).toFixed(1); // Ajout fluide
-      });
+        if (prev >= progress - 0.5 || prev >= 100) return prev;
+        return Math.min(100, +(prev + 0.5).toFixed(1));
+      });   
     }, 200);    
     return () => clearInterval(interval);
   }, [loading, progress]);

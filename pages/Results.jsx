@@ -1,6 +1,7 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import { processTripData } from "../data/processTripData"; // 👈 à créer (voir plus haut)
+import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
+import { processTripData } from "../data/processTripData";
 import ItineraryMap from "../components/Results/ItineraryMap";
 import DailyCardsCarousel from "../components/Results/DailyCardsCarousel";
 import DashboardMeteo from "../components/Results/DashboardMeteo";
@@ -19,19 +20,48 @@ function formatMinutes(mins) {
 }
 
 export default function Results() {
+  const { tripId } = useParams();
   const location = useLocation();
-  const tripRaw = location.state;
+  const [tripRaw, setTripRaw] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  // Charge le voyage depuis Supabase si tripId présent
   useEffect(() => {
-    if (tripRaw) {
-      localStorage.setItem("lastTripData", JSON.stringify(tripRaw));
-    }
-  }, [tripRaw]);
+    const loadTrip = async () => {
+      if (tripId) {
+        const { data, error } = await supabase
+          .from("trips")
+          .select("trip_data")
+          .eq("id", tripId)
+          .single();
+
+        if (error) {
+          console.error("Erreur de chargement du voyage :", error);
+        } else {
+          setTripRaw(data.trip_data);
+        }
+        setLoading(false);
+      } else {
+        const stateData = location.state;
+        if (stateData) {
+          localStorage.setItem("lastTripData", JSON.stringify(stateData));
+          setTripRaw(stateData);
+        }
+        setLoading(false);
+      }
+    };
+
+    loadTrip();
+  }, [tripId, location.state]);
+
+  if (loading) {
+    return <div className="text-center text-white py-20 text-xl">Chargement du voyage…</div>;
+  }
 
   if (!tripRaw) {
     return (
       <div className="text-center text-white py-20 text-xl">
-        Aucun voyage généré. Veuillez remplir le formulaire pour créer un itinéraire.
+        Aucun voyage trouvé.
       </div>
     );
   }
