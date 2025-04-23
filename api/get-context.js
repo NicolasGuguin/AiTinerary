@@ -31,7 +31,7 @@ module.exports = async function handler(req, res) {
   ---
   
   ### Règles à suivre :
-  1. Découpe le voyage en **chunks** de 3 à 10 jours, chacun avec un `id`, `title`, `duration` et une ou plusieurs `cityIds`.
+  1. Découpe le voyage en **chunks** de 3 à 10 jours, chacun avec un id, title, duration et une ou plusieurs cityIds.
   2. Chaque chunk doit avoir une **logique géographique ou thématique claire**.
   3. ⚠️ **Ne répète pas la même ville dans plusieurs chunks** sauf si c’est nécessaire pour la cohérence (ex : aller-retour impossible).
   4. L’ordre des villes doit suivre une **progression fluide**, sans zigzag.
