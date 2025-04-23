@@ -1,6 +1,6 @@
 import { Step, Trajet, City } from "../data/types";
 
-export async function generateTrajets(
+export async function generateInterChunkTrajets(
   steps: Step[],
   cities: City[],
   transportPreferences: string[],
@@ -9,10 +9,15 @@ export async function generateTrajets(
   const res = await fetch("/api/generate-trajets", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ steps, cities, transportPreferences, maxTravelDuration }),
+    body: JSON.stringify({
+      steps,
+      cities,
+      transportPreferences,
+      maxTravelDuration,
+    }),
   });
 
-  if (!res.ok) throw new Error("Erreur generateTrajets");
+  if (!res.ok) throw new Error("Erreur generateInterChunkTrajets");
 
   const trajets = await res.json();
   console.log("🛣️ Trajets générés :", trajets);

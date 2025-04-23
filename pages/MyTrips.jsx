@@ -54,7 +54,7 @@ export default function MyTrips() {
   return (
     <div className="px-4 py-10 max-w-5xl mx-auto space-y-10 text-white relative">
       <h1 className="text-4xl font-extrabold text-primary text-center">
-        📂 Mes voyages
+        Mes voyages
       </h1>
 
       {trips.length === 0 ? (

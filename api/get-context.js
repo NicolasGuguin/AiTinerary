@@ -14,46 +14,65 @@ module.exports = async function handler(req, res) {
   const formData = req.body;
 
   const prompt = `
-  Tu es un expert en organisation de voyages. Tu dois créer un itinéraire intelligent et personnalisé à partir des préférences suivantes :
-  
-  ### Détails du voyageur :
-  - Destination cible : ${formData.destination}
-  - Durée totale : ${formData.duration} jours
-  - Style de voyage préféré : ${formData.style.length > 0 ? formData.style.join(", ") : "non précisé"}
-  - Rythme souhaité : ${formData.rhythm}
-  - Type de voyage : ${formData.circularTrip ? "voyage circulaire" : "voyage aller simple"}
-  - Budget global : ${formData.budget ? formData.budget + " €" : "non précisé"}
-  - Moyens de transport autorisés : ${formData.transportPreferences.length > 0 ? formData.transportPreferences.join(", ") : "non précisé"}
-  - Temps de transport maximum : ${formData.maxTravelDuration || "illimité"}
-  - Vie nocturne : ${formData.nightlife} (par exemple : "Oui", "Non", "Peu importe")
-  - Éléments à éviter absolument : ${formData.avoid || "aucun"}
-  - Objectif du voyage : ${formData.purpose || "non précisé"}
-  
-  ### Contraintes importantes :
-  1. Le nombre d’étapes doit dépendre du rythme : 
-     - Lent → 1 à 2 villes par semaine
-     - Modéré → 2 à 3 villes par semaine
-     - Rapide → 3 à 6 villes par semaine
-  2. Si le voyage est circulaire, la dernière ville doit être proche ou identique à la première.
-  3. Si les transports disponibles sont limités (ex : "à pied", "à vélo"), privilégie les courtes distances.
-  4. L’itinéraire doit respecter le style demandé (nature, culturel, festif, etc.)
-  5. Ne propose pas de destinations très coûteuses si le budget est restreint.
-  6. La vie nocturne doit être présente uniquement si souhaitée.
-  7. ⚠️ **Le champ id pour chaque ville doit être au format kebab-case, sans majuscules ni accents** (ex: "ho-chi-minh-city", "hue", "la-paz").
-  8. **L’enchaînement des villes doit être géographiquement cohérent** pour éviter les allers-retours ou zigzags inutiles. Par exemple, en France, un itinéraire comme "Paris → Brest → Nice → Nantes → Marseille" n’a aucun sens.
-  9. **Fais passer l’itinéraire par des points d’intérêt touristiques majeurs** lorsque c’est pertinent et compatible avec les préférences du voyageur.
-  
-  ### Format attendu (obligatoire) :
-  {
-    "countries": ["Pays 1", "Pays 2 (optionnel)"],
-    "cities": [
-      { "id": "tokyo", "name": "Tokyo", "lat": 35.6762, "lng": 139.6503 },
-      ...
-    ]
-  }
-  
-  ⚠️ Réponds uniquement avec ce JSON, sans autre texte.
-  `;
+Tu es un expert en organisation de voyages. Ton rôle est de concevoir un itinéraire intelligent, cohérent et personnalisé à partir des préférences suivantes :
+
+### Détails du voyageur :
+- Destination cible : ${formData.destination}
+- Durée totale : ${formData.duration} jours
+- Style de voyage : ${formData.style.join(", ") || "non précisé"}
+- Rythme souhaité : ${formData.rhythm}
+- Type de voyage : ${formData.circularTrip ? "voyage circulaire" : "voyage aller simple"}
+- Budget global : ${formData.budget || "non précisé"} €
+- Moyens de transport autorisés : ${formData.transportPreferences.join(", ") || "non précisé"}
+- Temps de transport maximum : ${formData.maxTravelDuration || "illimité"}
+- Vie nocturne : ${formData.nightlife}
+- Éléments à éviter : ${formData.avoid || "aucun"}
+- Objectif principal : ${formData.purpose || "non précisé"}
+
+### Contraintes importantes :
+1. Le nombre de villes doit dépendre du rythme :
+   - Lent → 1 à 2 villes / semaine
+   - Modéré → 2 à 3 villes / semaine
+   - Rapide → 3 à 6 villes / semaine
+2. Le voyage doit être découpé en **chunks thématiques** de 3 à 10 jours. Chaque chunk doit :
+   - Avoir un identifiant unique (id) en **kebab-case**
+   - Contenir une ou plusieurs villes cohérentes géographiquement
+   - Représenter une logique thématique ou géographique
+3. Si le voyage est circulaire, la dernière ville doit être proche ou identique à la première.
+4. Si les transports sont limités (ex : à pied, à vélo), favorise les courtes distances.
+5. Respecte les styles et contraintes du voyageur (ex : festif → villes vivantes ; nature → parcs et campagnes ; etc.)
+6. Le coût de la vie doit être pris en compte selon le budget global.
+7. Ne propose pas la même ville dans plusieurs chunks sauf exception logique.
+8. L’ordre des villes doit former un **trajet fluide et cohérent géographiquement** (évite les zigzags).
+9. Chaque chunk doit être assez distinct des autres pour éviter la redondance.
+10. Si possible, passe par des points d’intérêt majeurs pour enrichir le voyage.
+
+### Format de réponse attendu :
+{
+  "countries": ["Japon"],
+  "cities": [
+    { "id": "tokyo", "name": "Tokyo", "lat": 35.6762, "lng": 139.6503 },
+    { "id": "hakone", "name": "Hakone", "lat": 35.2321, "lng": 139.1066 }
+  ],
+  "chunks": [
+    {
+      "id": "tokyo-start",
+      "title": "Découverte de Tokyo",
+      "duration": 4,
+      "cityIds": ["tokyo"]
+    },
+    {
+      "id": "nature-hakone",
+      "title": "Nature et Onsen à Hakone",
+      "duration": 3,
+      "cityIds": ["hakone"]
+    }
+  ]
+}
+
+⚠️ Réponds uniquement avec ce JSON. Aucune explication, aucun commentaire.
+`;
+
   
   
 
