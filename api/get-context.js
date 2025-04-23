@@ -14,35 +14,67 @@ module.exports = async function handler(req, res) {
   const formData = req.body;
 
   const prompt = `
-  Tu es un expert en organisation de voyages. Crée un itinéraire structuré et fluide à partir des préférences suivantes :
+  Tu es un expert en organisation de voyages. Ton rôle est de concevoir un itinéraire intelligent, cohérent et personnalisé à partir des préférences suivantes :
   
-  ### Voyageur :
-  - Destination : ${formData.destination}
-  - Durée : ${formData.duration} jours
-  - Style : ${formData.style.join(", ") || "non précisé"}
-  - Rythme : ${formData.rhythm}
-  - Type : ${formData.circularTrip ? "circulaire" : "aller simple"}
-  - Transports autorisés : ${formData.transportPreferences.join(", ") || "non précisé"}
-  - Max transport/étape : ${formData.maxTravelDuration || "illimité"}
-  - Budget : ${formData.budget || "non précisé"} €
+  ### 🧳 Détails du voyageur :
+  - Destination cible : ${formData.destination}
+  - Durée totale : ${formData.duration} jours
+  - Style de voyage : ${formData.style.join(", ") || "non précisé"}
+  - Rythme souhaité : ${formData.rhythm}
+  - Type de voyage : ${formData.circularTrip ? "voyage circulaire" : "voyage aller simple"}
+  - Budget global : ${formData.budget || "non précisé"} €
+  - Moyens de transport autorisés : ${formData.transportPreferences.join(", ") || "non précisé"}
+  - Temps de transport maximum : ${formData.maxTravelDuration || "illimité"}
   - Vie nocturne : ${formData.nightlife}
-  - À éviter : ${formData.avoid || "aucun"}
+  - Éléments à éviter : ${formData.avoid || "aucun"}
+  - Objectif principal : ${formData.purpose || "non précisé"}
   
   ---
   
-  ### Règles à suivre :
-  1. Découpe le voyage en **chunks** de 3 à 10 jours, chacun avec un id, title, duration et une ou plusieurs cityIds.
-  2. Chaque chunk doit avoir une **logique géographique ou thématique claire**.
-  3. ⚠️ **Ne répète pas la même ville dans plusieurs chunks** sauf si c’est nécessaire pour la cohérence (ex : aller-retour impossible).
-  4. L’ordre des villes doit suivre une **progression fluide**, sans zigzag.
-  5. Si le voyage est circulaire, la fin doit rejoindre le début.
-  6. Choisis les villes en accord avec le style de voyage demandé et les transports autorisés.
+  ### 📌 Contraintes de construction :
+  1. Le nombre de villes doit dépendre du rythme :
+     - Lent → 1 à 2 villes / semaine
+     - Modéré → 2 à 3 villes / semaine
+     - Rapide → 3 à 6 villes / semaine
+  
+  2. Le voyage doit être découpé en **chunks thématiques** de 3 à 10 jours.  
+     Chaque chunk doit :
+     - Avoir un identifiant (id) en **kebab-case**
+     - Avoir un titre thématique
+     - Contenir une ou plusieurs **cityIds**
+     - Être **géographiquement et thématiquement cohérent**
+     - Être **distinct** des autres (évite les redondances)
+  
+  3. ⚠️ Ne propose **aucune ville** dans plusieurs chunks sauf exception logique **justifiée par la cohérence géographique ou narrative**.
+  
+  4. Si le voyage est circulaire, la dernière ville doit être proche ou identique à la première.
+  
+  5. Le style (festif, nature, culturel…) doit guider le choix des régions.
+  
+  6. Prends en compte les transports autorisés (ex : "vélo" = pas de longues distances).
+  
+  7. Si le budget est faible, évite les villes très chères ou difficiles d'accès.
   
   ---
   
-  ### Format attendu :
+  ### ⚠️ Consignes strictes :
+  
+  - Les **villes** doivent apparaître **une seule fois** dans la section cities, avec :
+    - un id en **kebab-case** sans accent ni majuscule (ex: "la-paz", "ho-chi-minh")
+    - un name (nom réel de la ville)
+    - ses coordonnées GPS : lat et lng
+  
+  - Les chunks doivent utiliser uniquement les **id listés dans \`cities\`** via le champ cityIds.
+  
+  - L’itinéraire global doit former une **progression fluide géographiquement**.  
+    ⚠️ Interdiction stricte des zigzags du type "Séoul → Busan → Séoul → Jeju".
+  
+  ---
+  
+  ### ✅ Format de réponse JSON attendu :
+  
   {
-    "countries": ["Pays 1", "Pays 2"],
+    "countries": ["Pays 1", "Pays 2 (si applicable)"],
     "cities": [
       { "id": "tokyo", "name": "Tokyo", "lat": 35.6762, "lng": 139.6503 },
       ...
@@ -58,9 +90,8 @@ module.exports = async function handler(req, res) {
     ]
   }
   
-  ⚠️ Réponds uniquement avec ce JSON, sans aucun commentaire ni explication.
+  ⚠️ Réponds exclusivement avec ce JSON, sans aucun texte ou commentaire autour.
   `;
-  
   
 
   
