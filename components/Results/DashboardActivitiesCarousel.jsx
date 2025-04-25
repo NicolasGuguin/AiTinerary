@@ -8,7 +8,7 @@ export default function DashboardActivitesCarousel({ steps, activities, cities }
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesMap, setImagesMap] = useState({});
   const CARD_WIDTH = 260 + 24;
-
+  const fallbackImage = "https://source.unsplash.com/400x300/?travel,tourism";
   const getCityById = (id) => cities.find((c) => c.id === id);
 
   const allActivities = steps.flatMap((step) =>
@@ -57,23 +57,30 @@ export default function DashboardActivitesCarousel({ steps, activities, cities }
       if (imagesMap[activity.id]) return;
   
       const query = cleanForPexels(buildQuery(activity));
-      fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=3`,
-        {
-          headers: {
-            Authorization: PEXELS_API_KEY,
-          },
+      const cacheKey = `pexels_activity_${activity.id}`;
+  
+      const cached = localStorage.getItem(cacheKey);
+  
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) { // moins de 24h
+          setImagesMap((prev) => ({ ...prev, [activity.id]: parsed.url }));
+          return;
         }
-      )
+      }
+  
+      fetch(`/api/pexels?query=${encodeURIComponent(query)}&per_page=3`)
         .then((res) => res.json())
         .then((pexelsData) => {
           const photos = pexelsData.photos || [];
           const random = photos[Math.floor(Math.random() * photos.length)];
           const url = random?.src?.medium || fallbackImage;
   
-          setImagesMap((prev) => ({
-            ...prev,
-            [activity.id]: url,
+          setImagesMap((prev) => ({ ...prev, [activity.id]: url }));
+  
+          localStorage.setItem(cacheKey, JSON.stringify({
+            url,
+            timestamp: Date.now(),
           }));
         })
         .catch(() => {
@@ -81,9 +88,15 @@ export default function DashboardActivitesCarousel({ steps, activities, cities }
             ...prev,
             [activity.id]: fallbackImage,
           }));
+  
+          localStorage.setItem(cacheKey, JSON.stringify({
+            url: fallbackImage,
+            timestamp: Date.now(),
+          }));
         });
     });
   }, [allActivities, imagesMap]);
+  
   
   
   

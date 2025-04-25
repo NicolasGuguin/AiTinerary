@@ -8,7 +8,7 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
   const AUTO_SCROLL = true;
   const AUTO_SCROLL_INTERVAL = 10000;
   const API_KEY = apiKeys.pexels;
-
+  const fallbackImage = "https://source.unsplash.com/400x300/?travel,tourism";
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesMap, setImagesMap] = useState({});
   const CARD_WIDTH = 260 + 24; // 260px + 24px de gap
@@ -22,29 +22,49 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
     uniqueCityIds.forEach((cityId) => {
       const city = getCityById(cityId);
       if (!city || imagesMap[city.name]) return;
-
-      const page = Math.floor(Math.random() * 3) + 1; // page 1 à 3
-      const country = tripData.countries[0];      
+  
+      const page = Math.floor(Math.random() * 3) + 1;
+      const country = tripData.countries[0];
       const query = `${city.name} ${country || ""} travel`;
-      fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=15&page=${page}`, {
-      
-        headers: { Authorization: API_KEY },
-      })
+      const cacheKey = `pexels_city_${city.name}`;
+  
+      const cached = localStorage.getItem(cacheKey);
+  
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) { // moins de 24h
+          setImagesMap((prev) => ({ ...prev, [city.name]: parsed.url }));
+          return;
+        }
+      }
+  
+      fetch(`/api/pexels?query=${encodeURIComponent(query)}&per_page=15&page=${page}`)
         .then((res) => res.json())
         .then((data) => {
           const photos = data.photos || [];
           const randomIndex = Math.floor(Math.random() * photos.length);
           const url = photos[randomIndex]?.src?.medium || "https://source.unsplash.com/400x300/?travel,tourism";
+  
           setImagesMap((prev) => ({ ...prev, [city.name]: url }));
+  
+          localStorage.setItem(cacheKey, JSON.stringify({
+            url,
+            timestamp: Date.now(),
+          }));
         })
         .catch(() => {
-          setImagesMap((prev) => ({
-            ...prev,
-            [city.name]: "https://source.unsplash.com/400x300/?travel,tourism",
+          const fallbackUrl = "https://source.unsplash.com/400x300/?travel,tourism";
+  
+          setImagesMap((prev) => ({ ...prev, [city.name]: fallbackUrl }));
+  
+          localStorage.setItem(cacheKey, JSON.stringify({
+            url: fallbackUrl,
+            timestamp: Date.now(),
           }));
         });
     });
   }, [steps, cities, imagesMap]);
+  
   
   
 

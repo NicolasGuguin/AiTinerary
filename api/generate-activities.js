@@ -10,12 +10,13 @@ module.exports = async function handler(req, res) {
   const { steps, chunk, context } = req.body;
 
   const flatActivities = steps.flatMap(step =>
-    step.activities.map(title => ({
+    (step.activities || []).map(title => ({
       stepDay: step.day,
       title,
       cityId: step.cityId,
     }))
   );
+  
 
   const citiesMap = Object.fromEntries(
     context.cities.map(city => [city.id, city.name])

@@ -1,4 +1,4 @@
-import { Step, Context, FormData } from "../data/types";
+import { Step, Context, FormData, TripChunk  } from "../data/types";
 
 export async function generateStepsForChunk(
   chunk: TripChunk,
