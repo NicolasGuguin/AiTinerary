@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import vercel from 'vite-plugin-vercel';
 
 export default defineConfig({
-  base: '/', // ➔ ⚡ Ajout obligatoire pour un fonctionnement SPA propre sur Vercel
-  plugins: [react()],
+  base: '/',
+  plugins: [react(), vercel()],
   server: {
     port: 5173
   }
