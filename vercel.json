@@ -1,8 +1,5 @@
 {
-  "framework": null,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "output": "static",
+  "framework": "vite",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1.js" }
   ],
