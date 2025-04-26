@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { useUser } from "@supabase/auth-helpers-react";
 import { loadStripe } from "@stripe/stripe-js";
+import { FaStar } from "react-icons/fa"; // icône moderne
 
-// Charge Stripe avec ta clé publique (PAS la clé secrète ici !)
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY); // si tu utilises Vite
-// ou hardcodé temporairement :
-// const stripePromise = loadStripe("pk_test_...");
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 export default function PremiumPage() {
   const user = useUser();
@@ -20,18 +18,13 @@ export default function PremiumPage() {
         setLoading(false);
         return;
       }
-  
-      console.log("Fetching profile for user:", user.id);
-  
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single();
-  
-      console.log("Data:", data);
-      console.log("Error:", error);
-  
+
       if (error) {
         console.error('Erreur en récupérant le profil:', error);
       } else {
@@ -39,7 +32,7 @@ export default function PremiumPage() {
       }
       setLoading(false);
     }
-  
+
     fetchProfile();
   }, [user]);
 
@@ -63,27 +56,39 @@ export default function PremiumPage() {
     setCheckoutLoading(false);
   };
 
-  if (loading) return <div>Chargement...</div>;
+  if (loading) return <div className="flex justify-center items-center min-h-[50vh]">Chargement...</div>;
 
   return (
-    <div className="p-4 text-center">
-      <h1 className="text-2xl font-bold mb-4">Espace Premium</h1>
+    <div className="flex flex-col items-center justify-center p-6">
+      <div className="bg-card rounded-2xl shadow-lg p-8 max-w-lg w-full text-center border border-white/10">
+        <div className="flex justify-center mb-6">
+          <FaStar className="text-primary" size={48} />
+        </div>
 
-      <div className="text-lg mb-6">
-        {isPremium
-          ? "🎉 Tu es déjà Premium ! Merci infiniment pour ton soutien 🚀"
-          : "Tu n'es pas encore Premium. Deviens-le pour débloquer toutes les fonctionnalités ✨"}
+        <h1 className="text-3xl font-extrabold text-text mb-4">Espace Premium</h1>
+        
+        <p className="text-secondary text-lg mb-6">
+          {isPremium
+            ? "Tu es déjà Premium. Merci pour ton soutien !"
+            : "Accède aux fonctionnalités avancées et crée des voyages illimités."}
+        </p>
+
+        {!isPremium && (
+          <button
+            onClick={handleCheckout}
+            disabled={checkoutLoading}
+            className="px-6 py-3 rounded-xl bg-primary text-white font-bold hover:bg-secondary transition disabled:bg-gray-400"
+          >
+            {checkoutLoading ? "Redirection..." : "Devenir Premium"}
+          </button>
+        )}
+
+        {isPremium && (
+          <p className="mt-4 text-alert font-semibold">
+            Statut : Premium Activé
+          </p>
+        )}
       </div>
-
-      {!isPremium && (
-        <button
-          onClick={handleCheckout}
-          className="mt-6 px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition disabled:bg-gray-400"
-          disabled={checkoutLoading}
-        >
-          {checkoutLoading ? "Redirection en cours..." : "Devenir Premium"}
-        </button>
-      )}
     </div>
   );
 }
