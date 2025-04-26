@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PremiumPage from "./pages/Premium";
 import PremiumSuccess from "./pages/PremiumSuccess"; 
+import Footer from "./components/Footer";
 import LanternsBackground from "./components/LanternsBackground";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { supabase } from './lib/supabaseClient'; 
@@ -30,6 +31,7 @@ function App() {
             <Route path="/premium-success" element={<PremiumSuccess />} />
           </Routes>
         </div>
+        <Footer />
       </div>
     </SessionContextProvider>
   );
