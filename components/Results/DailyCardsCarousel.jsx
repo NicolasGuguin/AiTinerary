@@ -23,10 +23,9 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
       const city = getCityById(cityId);
       if (!city || imagesMap[city.name]) return;
   
-      const page = Math.floor(Math.random() * 3) + 1;
       const country = tripData.countries[0];
       const query = `${city.name} ${country || ""} travel`;
-      const cacheKey = `pexels_city_${city.name}`;
+      const cacheKey = `city_image_${city.name}`;
   
       const cached = localStorage.getItem(cacheKey);
   
@@ -38,12 +37,10 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
         }
       }
   
-      fetch(`/api/pexels?query=${encodeURIComponent(query)}&per_page=15&page=${page}`)
+      fetch(`/api/getImage?query=${encodeURIComponent(query)}`)
         .then((res) => res.json())
         .then((data) => {
-          const photos = data.photos || [];
-          const randomIndex = Math.floor(Math.random() * photos.length);
-          const url = photos[randomIndex]?.src?.medium || "https://source.unsplash.com/400x300/?travel,tourism";
+          const url = data?.url || "https://source.unsplash.com/400x300/?travel,tourism";
   
           setImagesMap((prev) => ({ ...prev, [city.name]: url }));
   
@@ -64,6 +61,7 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
         });
     });
   }, [steps, cities, imagesMap]);
+  
   
   
   
