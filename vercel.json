@@ -1,8 +1,10 @@
 {
   "framework": "vite",
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1.js" },
-    { "src": "/(.*)", "dest": "/" }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1.js" }
+  ],
+  "redirects": [
+    { "source": "/(.*)", "destination": "/", "statusCode": 200 }
   ],
   "functions": {
     "api/*.js": {
