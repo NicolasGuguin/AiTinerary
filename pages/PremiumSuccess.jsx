@@ -9,7 +9,13 @@ export default function PremiumSuccess() {
 
   useEffect(() => {
     async function upgradeUser() {
+      if (user === undefined) {
+        // user n'est pas encore chargé par Supabase
+        return;
+      }
+
       if (!user) {
+        // utilisateur non connecté
         setLoading(false);
         return;
       }
@@ -31,7 +37,28 @@ export default function PremiumSuccess() {
     upgradeUser();
   }, [user]);
 
-  if (loading) return <div>Chargement...</div>;
+  if (user === undefined || loading) {
+    return (
+      <div className="p-6 text-center">
+        <p className="text-lg">Chargement...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="p-6 text-center">
+        <h1 className="text-3xl font-bold mb-4">Connexion requise</h1>
+        <p className="text-lg">Merci de te reconnecter pour valider ton statut Premium.</p>
+        <a
+          href="/login"
+          className="inline-block mt-6 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition"
+        >
+          Se connecter
+        </a>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 text-center">
