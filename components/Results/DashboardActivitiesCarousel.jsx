@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { apiKeys } from "../../config/apiKeys";
 
 export default function DashboardActivitesCarousel({ steps, activities, cities }) {
-  const PEXELS_API_KEY  = apiKeys.pexels;
-  const UNSPLASH_ACCESS_KEY = apiKeys.unsplash;
+  const fallbackImage = "https://source.unsplash.com/400x300/?travel,tourism";
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesMap, setImagesMap] = useState({});
+  const [loadedIds, setLoadedIds] = useState(new Set());
+  const [loadingIds, setLoadingIds] = useState(new Set());
   const CARD_WIDTH = 260 + 24;
-  const fallbackImage = "https://source.unsplash.com/400x300/?travel,tourism";
+  const visibleBuffer = 2;
+
   const getCityById = (id) => cities.find((c) => c.id === id);
 
   const allActivities = steps.flatMap((step) =>
@@ -21,87 +23,81 @@ export default function DashboardActivitesCarousel({ steps, activities, cities }
       }))
   );
 
-  function extractVisualKeywords(text) {
-    if (!window.Intl || !Intl.Segmenter) return text;
-  
-    const segmenter = new Intl.Segmenter("fr", { granularity: "word" }); // "fr" = par défaut mais à terme dynamique
-    const segments = Array.from(segmenter.segment(text.toLowerCase()));
-  
-    return segments
-      .map(seg => seg.segment.trim())
-      .filter(seg => seg && seg.length > 2 && !seg.match(/^[\d\W]+$/)) // ignore nombres, ponctuations
-      .slice(0, 6) // limiter pour ne pas trop allonger la requête
-      .join(" ");
-  }
-
-  function buildQuery(activity) {
+  const buildQuery = (activity) => {
     const base = `${activity.id} ${activity.cityName}`;
-    const visualWords = extractVisualKeywords(base);
-    return `${visualWords} travel`;
-  }
-
-  function cleanForPexels(text) {
-    return text
+    return base
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "") // supprime les accents
-      .replace(/[^a-zA-Z0-9 ]/g, "") // supprime les caractères spéciaux
-      .trim();
-  }
-  
-  
-  
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9 ]/g, "")
+      .trim()
+      + " travel";
+  };
 
-  // Récupération d’images Pexels
   useEffect(() => {
-    allActivities.forEach((activity) => {
-      if (imagesMap[activity.id]) return;
-  
-      const query = cleanForPexels(buildQuery(activity));
-      const cacheKey = `pexels_activity_${activity.id}`;
-  
-      const cached = localStorage.getItem(cacheKey);
-  
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) { // moins de 24h
-          setImagesMap((prev) => ({ ...prev, [activity.id]: parsed.url }));
-          return;
+    const preloadImages = async () => {
+      const toLoad = [];
+
+      for (let i = currentIndex - visibleBuffer; i <= currentIndex + visibleBuffer; i++) {
+        const realIndex = (i + allActivities.length) % allActivities.length;
+        const activity = allActivities[realIndex];
+        if (!activity) continue;
+        if (!loadedIds.has(activity.id) && !loadingIds.has(activity.id)) {
+          toLoad.push(activity);
         }
       }
-  
-      fetch(`/api/pexels?query=${encodeURIComponent(query)}&per_page=3`)
-        .then((res) => res.json())
-        .then((pexelsData) => {
-          const photos = pexelsData.photos || [];
-          const random = photos[Math.floor(Math.random() * photos.length)];
-          const url = random?.src?.medium || fallbackImage;
-  
+
+      for (const activity of toLoad) {
+        const query = buildQuery(activity);
+        const cacheKey = `activity_image_${activity.id}`;
+
+        setLoadingIds(prev => new Set(prev).add(activity.id));
+
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
+            console.log(`📦 [CACHE] Activité "${activity.title}" chargée du cache.`);
+            setImagesMap((prev) => ({ ...prev, [activity.id]: parsed.url }));
+            setLoadedIds(prev => new Set(prev).add(activity.id));
+            setLoadingIds(prev => {
+              const next = new Set(prev);
+              next.delete(activity.id);
+              return next;
+            });
+            continue;
+          }
+        }
+
+        try {
+          console.log(`🔍 [FETCH] Recherche d'image pour "${activity.title}"...`);
+          const res = await fetch(`/api/getImage?query=${encodeURIComponent(query)}`);
+          const data = await res.json();
+          const url = data?.url || fallbackImage;
+
+          console.log(`✅ [OK] Image trouvée pour "${activity.title}" :`, url);
           setImagesMap((prev) => ({ ...prev, [activity.id]: url }));
-  
+          setLoadedIds(prev => new Set(prev).add(activity.id));
+
           localStorage.setItem(cacheKey, JSON.stringify({
-            url,
+            url: url,
             timestamp: Date.now(),
           }));
-        })
-        .catch(() => {
-          setImagesMap((prev) => ({
-            ...prev,
-            [activity.id]: fallbackImage,
-          }));
-  
-          localStorage.setItem(cacheKey, JSON.stringify({
-            url: fallbackImage,
-            timestamp: Date.now(),
-          }));
-        });
-    });
-  }, [allActivities, imagesMap]);
-  
-  
-  
-  
-  
-  
+        } catch (error) {
+          console.error(`❌ [ERREUR] Impossible de charger "${activity.title}"`, error);
+          setImagesMap((prev) => ({ ...prev, [activity.id]: fallbackImage }));
+          setLoadedIds(prev => new Set(prev).add(activity.id));
+        } finally {
+          setLoadingIds(prev => {
+            const next = new Set(prev);
+            next.delete(activity.id);
+            return next;
+          });
+        }
+      }
+    };
+
+    preloadImages();
+  }, [currentIndex, allActivities]);
 
   const scroll = (dir) => {
     setCurrentIndex((prev) =>
@@ -140,7 +136,8 @@ export default function DashboardActivitesCarousel({ steps, activities, cities }
         >
           {allActivities.map((activity, index) => {
             const isCenter = index === currentIndex;
-            const imageUrl = imagesMap[activity.id] || "https://source.unsplash.com/400x300/?travel";
+            const imageUrl = imagesMap[activity.id] || fallbackImage;
+            const isLoading = loadingIds.has(activity.id);
 
             return (
               <motion.div
@@ -152,8 +149,19 @@ export default function DashboardActivitesCarousel({ steps, activities, cities }
                   transition: "all 0.3s ease-in-out",
                 }}
               >
-                <div className="h-40 w-full rounded-lg overflow-hidden mb-4 bg-gradient-to-br from-primary to-secondary">
-                  <img src={imageUrl} alt={activity.title} className="object-cover h-full w-full" />
+                <div className="relative h-40 w-full rounded-lg overflow-hidden mb-4 bg-gradient-to-br from-primary to-secondary">
+                  {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                      <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                  <img
+                    src={imageUrl}
+                    alt={activity.title}
+                    className={`object-cover h-full w-full transition-all duration-500 ${
+                      isLoading ? "blur-md grayscale" : "blur-0 grayscale-0"
+                    }`}
+                  />
                 </div>
                 <h3 className="text-sm text-secondary font-semibold mb-1">
                   {activity.cityName} – Jour {activity.stepDay}

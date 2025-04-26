@@ -99,7 +99,7 @@ export default function MyTrips() {
                     onClick={() => handleDelete(trip.id)}
                     className="px-6 py-2 rounded-xl bg-red-600 text-white hover:bg-red-500 transition font-semibold"
                   >
-                    🗑️ Supprimer
+                    Supprimer
                   </button>
                 </div>
               </div>

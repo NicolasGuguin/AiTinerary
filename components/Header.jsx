@@ -22,9 +22,14 @@ export default function Header() {
           Créer un voyage
         </Link>
         {user && (
-          <Link to="/my-trips" className="text-secondary hover:text-white transition-all">
-            Mes voyages
-          </Link>
+          <>
+            <Link to="/my-trips" className="text-secondary hover:text-white transition-all">
+              Mes voyages
+            </Link>
+            <Link to="/premium" className="text-secondary hover:text-white transition-all">
+              Premium
+            </Link>
+          </>
         )}
         <Link to="/" className="text-secondary hover:text-white transition-all">
           Accueil
@@ -50,7 +55,7 @@ export default function Header() {
         ) : (
           <>
             <span className="text-sm text-gray-300 hidden sm:inline">
-               {user.email}
+              {user.email}
             </span>
             <button
               onClick={handleLogout}

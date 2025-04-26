@@ -7,66 +7,81 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
   const { isFullscreen } = useMapContext();
   const AUTO_SCROLL = true;
   const AUTO_SCROLL_INTERVAL = 10000;
-  const API_KEY = apiKeys.pexels;
   const fallbackImage = "https://source.unsplash.com/400x300/?travel,tourism";
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesMap, setImagesMap] = useState({});
-  const CARD_WIDTH = 260 + 24; // 260px + 24px de gap
+  const [loadingCities, setLoadingCities] = useState(new Set());
+  const pendingLoads = useRef(new Set());
+
+  const CARD_WIDTH = 260 + 24;
 
   const getCityById = (id) => cities.find((c) => c.id === id);
 
-  // Chargement des images
   useEffect(() => {
-    const uniqueCityIds = [...new Set(steps.map((step) => step.cityId))];
-  
-    uniqueCityIds.forEach((cityId) => {
-      const city = getCityById(cityId);
-      if (!city || imagesMap[city.name]) return;
-  
-      const country = tripData.countries[0];
-      const query = `${city.name} ${country || ""} travel`;
-      const cacheKey = `city_image_${city.name}`;
-  
-      const cached = localStorage.getItem(cacheKey);
-  
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) { // moins de 24h
-          setImagesMap((prev) => ({ ...prev, [city.name]: parsed.url }));
-          return;
+    const loadImages = async () => {
+      const uniqueCityIds = [...new Set(steps.map((step) => step.cityId))];
+
+      for (const cityId of uniqueCityIds) {
+        const city = getCityById(cityId);
+        if (!city) continue;
+
+        const cityName = city.name;
+        const cacheKey = `city_image_${cityName}`;
+
+        if (imagesMap[cityName] || pendingLoads.current.has(cityName)) continue;
+
+        const cached = localStorage.getItem(cacheKey);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
+            console.log(`📦 [CACHE] Ville "${cityName}" chargée du cache.`);
+            setImagesMap((prev) => ({ ...prev, [cityName]: parsed.url }));
+            continue;
+          }
         }
-      }
-  
-      fetch(`/api/getImage?query=${encodeURIComponent(query)}`)
-        .then((res) => res.json())
-        .then((data) => {
-          const url = data?.url || "https://source.unsplash.com/400x300/?travel,tourism";
-  
-          setImagesMap((prev) => ({ ...prev, [city.name]: url }));
-  
+
+        try {
+          pendingLoads.current.add(cityName);
+          setLoadingCities(prev => new Set(prev).add(cityName));
+
+          const country = tripData.countries[0];
+          const query = `${cityName} ${country}`.trim();
+          console.log(`🔍 [FETCH] Image pour "${cityName}"...`);
+
+          const res = await fetch(`/api/getImage?query=${encodeURIComponent(query)}`);
+          const data = await res.json();
+          const url = data?.url || fallbackImage;
+
+          console.log(`✅ [OK] Image trouvée pour "${cityName}" :`, url);
+          setImagesMap((prev) => ({ ...prev, [cityName]: url }));
+
           localStorage.setItem(cacheKey, JSON.stringify({
             url,
             timestamp: Date.now(),
           }));
-        })
-        .catch(() => {
-          const fallbackUrl = "https://source.unsplash.com/400x300/?travel,tourism";
-  
-          setImagesMap((prev) => ({ ...prev, [city.name]: fallbackUrl }));
-  
+        } catch (error) {
+          console.error(`❌ [ERROR] Ville "${cityName}"`, error);
+          setImagesMap((prev) => ({ ...prev, [cityName]: fallbackImage }));
+
           localStorage.setItem(cacheKey, JSON.stringify({
-            url: fallbackUrl,
+            url: fallbackImage,
             timestamp: Date.now(),
           }));
-        });
-    });
-  }, [steps, cities, imagesMap]);
-  
-  
-  
-  
+        } finally {
+          pendingLoads.current.delete(cityName);
+          setLoadingCities(prev => {
+            const next = new Set(prev);
+            next.delete(cityName);
+            return next;
+          });
+        }
+      }
+    };
 
-  // Auto scroll
+    loadImages();
+  }, [steps, cities, tripData]);
+
   useEffect(() => {
     if (!AUTO_SCROLL || isFullscreen) return;
     const interval = setInterval(() => {
@@ -90,16 +105,10 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
     <div className="relative w-full overflow-hidden pt-6">
       {!isFullscreen && (
         <>
-          <button
-            onClick={() => scroll("left")}
-            className="absolute top-1/2 -translate-y-1/2 left-2 z-20 bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all"
-          >
+          <button onClick={() => scroll("left")} className="absolute top-1/2 -translate-y-1/2 left-2 z-20 bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all">
             ◀
           </button>
-          <button
-            onClick={() => scroll("right")}
-            className="absolute top-1/2 -translate-y-1/2 right-2 z-20 bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all"
-          >
+          <button onClick={() => scroll("right")} className="absolute top-1/2 -translate-y-1/2 right-2 z-20 bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all">
             ▶
           </button>
         </>
@@ -119,7 +128,9 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
             if (!city) return null;
 
             const isCenter = index === currentIndex;
-            const imageUrl = imagesMap[city.name] || "https://source.unsplash.com/400x300/?travel,nature";
+            const cityName = city.name;
+            const imageUrl = imagesMap[cityName] || fallbackImage;
+            const isLoading = loadingCities.has(cityName);
 
             return (
               <motion.div
@@ -131,17 +142,28 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
                   transition: "all 0.3s ease-in-out",
                 }}
               >
-                <div className="h-40 w-full rounded-lg overflow-hidden mb-4 bg-gradient-to-br from-primary to-secondary">
-                  <img src={imageUrl} alt={city.name} className="object-cover h-full w-full" />
+                <div className="relative h-40 w-full rounded-lg overflow-hidden mb-4 bg-gradient-to-br from-primary to-secondary">
+                  {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                      <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                  <img
+                    src={imageUrl}
+                    alt={cityName}
+                    className={`object-cover h-full w-full transition-all duration-500 ${
+                      isLoading ? "blur-md grayscale" : "blur-0 grayscale-0"
+                    }`}
+                  />
                 </div>
                 <h3 className="text-secondary text-sm font-semibold mb-1">Jour {step.day}</h3>
-                <p className="text-lg font-bold text-white mb-1">{city.name}</p>
+                <p className="text-lg font-bold text-white mb-1">{cityName}</p>
                 {step.activities && step.activities.length > 0 && (
-                <ul className="text-sm text-gray-300 list-disc list-inside space-y-1 mt-2">
+                  <ul className="text-sm text-gray-300 list-disc list-inside space-y-1 mt-2">
                     {step.activities.map((activity, idx) => (
-                    <li key={idx}>{activity}</li>
+                      <li key={idx}>{activity}</li>
                     ))}
-                </ul>
+                  </ul>
                 )}
               </motion.div>
             );
@@ -155,9 +177,7 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
             {steps.map((_, i) => (
               <div
                 key={i}
-                className={`w-2.5 h-2.5 rounded-full ${
-                  i === currentIndex ? "bg-primary" : "bg-gray-500"
-                } transition-all duration-300`}
+                className={`w-2.5 h-2.5 rounded-full ${i === currentIndex ? "bg-primary" : "bg-gray-500"} transition-all duration-300`}
               />
             ))}
           </div>
@@ -165,9 +185,7 @@ export default function DailyCardsCarousel({ steps, cities, tripData }) {
           <div className="w-1/2 h-2 bg-gray-800 rounded-full overflow-hidden relative">
             <div
               className="absolute top-0 left-0 h-full bg-primary transition-all duration-300"
-              style={{
-                width: `${(currentIndex / (steps.length - 1)) * 100}%`,
-              }}
+              style={{ width: `${(currentIndex / (steps.length - 1)) * 100}%` }}
             />
           </div>
         )}
