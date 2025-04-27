@@ -45,24 +45,21 @@ export default function StoryMap({ steps, cities }) {
   useEffect(() => {
     if (mapRef.current && cityPositions.length > 0) {
       const map = mapRef.current;
-  
-      // 🔥 Calculer la taille du container pour ajuster dynamiquement
       const container = map.getContainer();
       const containerWidth = container.clientWidth;
       const containerHeight = container.clientHeight;
   
-      // 🔥 Définir un padding intelligent (environ 2-3% de la taille, minimum 20px)
-      const dynamicPadding = Math.max(
-        20,
-        Math.min(containerWidth, containerHeight) * 0.03
-      );
+      // 🔥 Définir un padding intelligent : plus haut que large
+      const paddingX = Math.max(20, containerWidth * 0.05); // 5% minimum
+      const paddingY = Math.max(20, containerHeight * 0.12); // 12% minimum
   
       map.fitBounds(cityPositions, {
-        paddingTopLeft: [dynamicPadding, dynamicPadding],
-        paddingBottomRight: [dynamicPadding, dynamicPadding],
+        paddingTopLeft: [paddingX, paddingY],
+        paddingBottomRight: [paddingX, paddingY],
       });
     }
   }, [cityPositions]);
+  
   
 
   if (cityPositions.length === 0) return null;
