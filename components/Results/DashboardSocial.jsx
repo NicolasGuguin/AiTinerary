@@ -6,25 +6,15 @@ export default function DashboardSocial({ cities }) {
   const [index, setIndex] = useState(0);
   const [videos, setVideos] = useState([]);
   const [videoIndex, setVideoIndex] = useState(0);
-  const [cardsPerView, setCardsPerView] = useState(1);
   const scrollRef = useRef(null);
-  const cardWidth = 270;
+
+  const CARD_WIDTH = 270; // carte
+  const CARD_GAP = 16;     // gap entre cartes
+  const TOTAL_CARD_WIDTH = CARD_WIDTH + CARD_GAP; // ⚡ largeur totale d'une carte
+
   const API_KEY = "AIzaSyDO_UayqES07-0prT3Qo2FYSpzgfrSTLmo";
 
   const city = cities[index];
-
-  useEffect(() => {
-    const updateCardsPerView = () => {
-      const width = window.innerWidth;
-      if (width >= 1280) setCardsPerView(4);
-      else if (width >= 1024) setCardsPerView(3);
-      else if (width >= 640) setCardsPerView(2);
-      else setCardsPerView(1);
-    };
-    updateCardsPerView();
-    window.addEventListener("resize", updateCardsPerView);
-    return () => window.removeEventListener("resize", updateCardsPerView);
-  }, []);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -54,15 +44,14 @@ export default function DashboardSocial({ cities }) {
 
   const scroll = (dir) => {
     const total = videos.length;
-    const maxIndex = Math.max(0, total - cardsPerView);
-    const newIndex =
-      dir === "left"
-        ? Math.max(0, videoIndex - cardsPerView)
-        : Math.min(maxIndex, videoIndex + cardsPerView);
+    const maxIndex = total - 1;
+    const newIndex = dir === "left"
+      ? Math.max(0, videoIndex - 1)
+      : Math.min(maxIndex, videoIndex + 1);
 
     setVideoIndex(newIndex);
     scrollRef.current?.scrollTo({
-      left: newIndex * cardWidth,
+      left: newIndex * TOTAL_CARD_WIDTH,
       behavior: "smooth",
     });
   };
@@ -99,71 +88,69 @@ export default function DashboardSocial({ cities }) {
       </div>
 
       {/* Carousel des vidéos */}
-     {/* Carousel des vidéos */}
-<div className="relative w-full">
-  <button
-    onClick={() => scroll("left")}
-    className="absolute top-1/2 left-2 z-10 transform -translate-y-1/2 p-2 bg-primary text-white rounded-full shadow hover:bg-secondary hover:text-black"
-  >
-    <MdChevronLeft />
-  </button>
-
-  <div ref={scrollRef} className="overflow-hidden w-full">
-    <div
-      className="flex transition-all gap-4"
-      style={{
-        width: `${videos.length * (cardWidth + 16)}px`, // ⚡ force la largeur du flex
-        transform: `translateX(-${videoIndex * (cardWidth + 16)}px)`, // ⚡ translation propre
-        transition: "transform 0.5s ease",
-      }}
-    >
-      {videos.map((v) => (
-        <div
-          key={v.id.videoId}
-          className="w-[270px] flex-shrink-0 rounded-2xl overflow-hidden shadow-xl relative group bg-[#1C2431] transition-transform duration-300 hover:scale-105"
+      <div className="relative w-full">
+        <button
+          onClick={() => scroll("left")}
+          className="absolute top-1/2 left-2 z-10 transform -translate-y-1/2 p-2 bg-primary text-white rounded-full shadow hover:bg-secondary hover:text-black"
         >
-          <div className="relative h-[200px] overflow-hidden">
-            <iframe
-              width="100%"
-              height="100%"
-              src={`https://www.youtube.com/embed/${v.id.videoId}?origin=${window.location.origin}`}
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              className="rounded-t-2xl"
-            ></iframe>
+          <MdChevronLeft />
+        </button>
 
-            <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-50 transition duration-300 flex items-end pointer-events-none">
-              <div className="text-white p-3 text-sm font-medium line-clamp-2 w-full bg-gradient-to-t from-black/70 to-transparent pointer-events-none">
-                {v.snippet.title}
+        <div ref={scrollRef} className="overflow-hidden w-full">
+          <div
+            className="flex gap-4"
+            style={{
+              width: `${videos.length * TOTAL_CARD_WIDTH}px`,
+              transform: `translateX(-${videoIndex * TOTAL_CARD_WIDTH}px)`,
+              transition: "transform 0.5s ease",
+            }}
+          >
+            {videos.map((v) => (
+              <div
+                key={v.id.videoId}
+                className="w-[270px] flex-shrink-0 rounded-2xl overflow-hidden shadow-xl relative group bg-[#1C2431] transition-transform duration-300 hover:scale-105"
+              >
+                <div className="relative h-[200px] overflow-hidden">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src={`https://www.youtube.com/embed/${v.id.videoId}?origin=${window.location.origin}`}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="rounded-t-2xl"
+                  ></iframe>
+
+                  <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-50 transition duration-300 flex items-end pointer-events-none">
+                    <div className="text-white p-3 text-sm font-medium line-clamp-2 w-full bg-gradient-to-t from-black/70 to-transparent pointer-events-none">
+                      {v.snippet.title}
+                    </div>
+                  </div>
+                </div>
+                <div className="p-3">
+                  <p className="text-xs text-gray-400">@{v.snippet.channelTitle}</p>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="p-3">
-            <p className="text-xs text-gray-400">@{v.snippet.channelTitle}</p>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
 
-  <button
-    onClick={() => scroll("right")}
-    className="absolute top-1/2 right-2 z-10 transform -translate-y-1/2 p-2 bg-primary text-white rounded-full shadow hover:bg-secondary hover:text-black"
-  >
-    <MdChevronRight />
-  </button>
-</div>
-
+        <button
+          onClick={() => scroll("right")}
+          className="absolute top-1/2 right-2 z-10 transform -translate-y-1/2 p-2 bg-primary text-white rounded-full shadow hover:bg-secondary hover:text-black"
+        >
+          <MdChevronRight />
+        </button>
+      </div>
 
       {/* Pagination */}
       <div className="flex justify-center mt-4 gap-1">
-        {Array.from({ length: Math.ceil(videos.length / cardsPerView) }, (_, i) => (
+        {Array.from({ length: videos.length }, (_, i) => (
           <div
             key={i}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              i === Math.floor(videoIndex / cardsPerView)
+              i === videoIndex
                 ? "bg-primary shadow-[0_0_6px_rgba(244,63,94,0.8)] scale-110"
                 : "bg-gray-600 opacity-50"
             }`}
