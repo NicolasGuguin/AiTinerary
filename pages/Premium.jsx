@@ -60,12 +60,16 @@ export default function PremiumPage() {
   if (loading) return <div className="flex justify-center items-center min-h-[50vh]">Chargement...</div>;
 
   return (
-    <div className="flex flex-col items-center justify-center p-6">
+    <div className="relative min-h-screen overflow-hidden flex flex-col items-center justify-center p-6 bg-background">
+      {/* Animation de fond */}
+      <div className="absolute inset-0 animate-gradient bg-gradient-to-br from-primary/30 via-secondary/20 to-background opacity-30 blur-3xl z-0"></div>
+  
+      {/* Contenu premium */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-card rounded-2xl shadow-2xl p-8 w-full max-w-4xl text-center border border-white/10"
+        className="relative bg-card rounded-2xl shadow-2xl p-8 w-full max-w-4xl text-center border border-white/10 z-10"
       >
         <div className="flex justify-center mb-6">
           <FaStar className="text-primary" size={48} />
