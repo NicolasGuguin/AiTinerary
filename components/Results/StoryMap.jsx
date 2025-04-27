@@ -44,8 +44,8 @@ export default function StoryMap({ steps, cities }) {
 
   return (
     <div
-      className="relative bg-[#f9fafb] rounded-2xl overflow-hidden shadow-lg"
-      style={{ width: "600px", height: "400px", margin: "0 auto" }}
+    className="relative bg-[#f9fafb] rounded-2xl overflow-hidden shadow-lg"
+    style={{ width: "720px", height: "960px", margin: "0 auto" }}
     >
       <MapContainer
         center={enrichedSteps[0]}
