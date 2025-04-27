@@ -152,7 +152,7 @@ export default function Results() {
           <DashboardSocial cities={cities} />
         </section>
 
-        <ShareTrip tripId={tripId} tripData={tripData} />
+        <ShareTrip tripId={tripId} tripData={tripData} trajets={trajets}/>
       </div>
     </div>
   );
