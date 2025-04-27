@@ -10,8 +10,13 @@ export default function MyTrips() {
 
   useEffect(() => {
     const fetchTrips = async () => {
-      const user = supabase.auth.user();
-      if (!user) return;
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError || !userData?.user) {
+        console.error("Utilisateur non connecté :", userError);
+        setLoading(false);
+        return;
+      }
+      const user = userData.user;
 
       const { data, error } = await supabase
         .from("trips")
@@ -101,7 +106,7 @@ export default function MyTrips() {
                 </div>
               </div>
 
-              {/* 👉 ItineraryMap embarqué dans chaque trip */}
+              {/* Map embarquée */}
               <div className="w-full md:w-1/2 rounded-xl overflow-hidden">
                 <ItineraryMap
                   steps={trip.trip_data?.steps || []}
@@ -114,7 +119,7 @@ export default function MyTrips() {
         ))
       )}
 
-      {/* Toast message */}
+      {/* Toast */}
       {toast && (
         <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg z-50">
           {toast}
