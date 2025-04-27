@@ -93,12 +93,14 @@ export default function ShareTrip({ tripId, tripData, trajets }) {
       {/* Story Preview visible si demandé */}
       {storyReady && (
         <div className="mt-8 flex flex-col items-center gap-4">
-            <div className="relative" style={{ width: "300px", height: "533px" }}>
+            <div className="relative" style={{ width: "360px", height: "640px", overflow: "hidden" }}>
             <div
-            ref={storyRef}
-            style={{
+                ref={storyRef}
+                style={{
                 width: "1080px",
                 height: "1920px",
+                transform: "scale(0.3333)", // 360/1080
+                transformOrigin: "top left",
                 background: "linear-gradient(135deg, #141A2A, #F43F5E)",
                 color: "white",
                 padding: "80px 60px",
@@ -107,7 +109,7 @@ export default function ShareTrip({ tripId, tripData, trajets }) {
                 flexDirection: "column",
                 justifyContent: "space-between",
                 boxSizing: "border-box",
-            }}
+                }}
             >
             {/* En-tête */}
             <div className="flex flex-col items-center gap-8">
