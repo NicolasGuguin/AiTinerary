@@ -93,22 +93,24 @@ export default function ShareTrip({ tripId, tripData, trajets }) {
       {/* Story Preview visible si demandé */}
       {storyReady && (
         <div className="mt-8 flex flex-col items-center gap-4">
-          <div className="border-2 border-white rounded-2xl overflow-hidden shadow-xl max-w-[300px]">
-            <div
-              ref={storyRef}
-              style={{
-                width: "1080px",
-                height: "1920px",
-                background: "linear-gradient(135deg, #141A2A, #F43F5E)",
-                color: "white",
-                padding: "80px 60px",
-                fontFamily: "'Poppins', sans-serif",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                boxSizing: "border-box",
-              }}
-            >
+            <div className="relative" style={{ width: "300px", height: "533px" }}>
+                <div
+                    ref={storyRef}
+                    style={{
+                    width: "1080px",
+                    height: "1920px",
+                    transform: "scale(0.2777)", // 300 / 1080
+                    transformOrigin: "top left",
+                    background: "linear-gradient(135deg, #141A2A, #F43F5E)",
+                    color: "white",
+                    padding: "80px 60px",
+                    fontFamily: "'Poppins', sans-serif",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    boxSizing: "border-box",
+                    }}
+                >
               {/* En-tête */}
               <div className="text-5xl font-extrabold text-white drop-shadow-md text-center">
                 🌍 Mon Aventure
