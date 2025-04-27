@@ -4,6 +4,7 @@ import { useMapContext } from "../../context/MapContext";
 import { useEffect, useRef, useState } from "react";
 import "leaflet-polylinedecorator";
 
+// 🔥 Icône custom avec animation pop
 function createCustomIcon(index) {
   return new L.DivIcon({
     className: 'custom-marker group',
@@ -24,9 +25,9 @@ function createCustomIcon(index) {
   });
 }
 
+// 🔥 Polyline avec flèches
 function PolylineArrows({ positions }) {
   const map = useMap();
-
   useEffect(() => {
     const arrowHead = L.polylineDecorator(L.polyline(positions, { color: "#F43F5E" }), {
       patterns: [
@@ -43,17 +44,15 @@ function PolylineArrows({ positions }) {
     arrowHead.addTo(map);
     return () => map.removeLayer(arrowHead);
   }, [positions, map]);
-
   return null;
 }
 
+// 🔥 Group steps by location (évite doublons sur même ville)
 function groupStepsByCity(steps) {
   const grouped = [];
   const seen = new Set();
-
   for (const step of steps) {
     if (!step.location || !step.location.lat || !step.location.lng) continue;
-
     const key = `${step.city}_${step.location.lat}_${step.location.lng}`;
     if (!seen.has(key)) {
       grouped.push({
@@ -66,14 +65,14 @@ function groupStepsByCity(steps) {
     const last = grouped[grouped.length - 1];
     last.days.push({ day: step.day, activity: step.activities?.[0] ?? "" });
   }
-
   return grouped;
 }
 
 export default function ItineraryMap({ steps, cities }) {
   const { isFullscreen, setIsFullscreen } = useMapContext();
-  const [replayIndex, setReplayIndex] = useState(steps.length);
+  const [replayIndex, setReplayIndex] = useState(0);
   const [isReplaying, setIsReplaying] = useState(false);
+  const [currentLine, setCurrentLine] = useState([]);
   const mapRef = useRef(null);
 
   const enrichedSteps = steps.map((step) => {
@@ -89,34 +88,37 @@ export default function ItineraryMap({ steps, cities }) {
     .filter((step) => step.location)
     .map((step) => [step.location.lat, step.location.lng]);
 
+  // Centrage automatique au chargement
+  useEffect(() => {
+    if (mapRef.current && positions.length > 0) {
+      mapRef.current.fitBounds(positions, { padding: [50, 50] });
+      setCurrentLine([]);
+    }
+  }, [positions]);
+
   const startReplay = () => {
+    if (positions.length === 0) return;
     setIsReplaying(true);
-    setReplayIndex(0);
+    setReplayIndex(1);
+    setCurrentLine([positions[0]]);
   };
 
-  useEffect(() => {
-    if (!isReplaying && mapRef.current && positions.length > 0) {
-      mapRef.current.fitBounds(positions, { padding: [50, 50] });
-    }
-  }, [isReplaying, positions]);
-
+  // 🔥 Animation du tracé + flyTo à chaque étape
   useEffect(() => {
     if (!isReplaying) return;
-    if (replayIndex >= steps.length) {
+    if (replayIndex >= positions.length) {
       setIsReplaying(false);
       return;
     }
-
     const timer = setTimeout(() => {
-      setReplayIndex((prev) => prev + 1);
-      const next = steps[replayIndex];
-      if (mapRef.current && next && next.location) {
-        mapRef.current.flyTo([next.location.lat, next.location.lng], 7, { duration: 1.2 });
+      setCurrentLine((prev) => [...prev, positions[replayIndex]]);
+      if (mapRef.current && positions[replayIndex]) {
+        mapRef.current.flyTo(positions[replayIndex], 7, { duration: 1 });
       }
-    }, 600);
-
+      setReplayIndex((prev) => prev + 1);
+    }, 800);
     return () => clearTimeout(timer);
-  }, [replayIndex, isReplaying, steps]);
+  }, [replayIndex, isReplaying, positions]);
 
   function getTooltipHTML(city, days) {
     const content = days.map((d) => `Jour ${d.day} – ${d.activity}`).join("<br/>");
@@ -169,11 +171,13 @@ export default function ItineraryMap({ steps, cities }) {
           url="https://{s}.tile.jawg.io/jawg-terrain/{z}/{x}/{y}{r}.png?access-token=WU6TJdxzyeSkRDOh1rujsv1StIDjTRnL4h3uFGr597sDtHhfGpvejbH1YDYVwuBK"
           attribution='&copy; <a href="https://www.jawg.io">Jawg</a> contributors'
         />
-        <Polyline positions={positions} color="#F43F5E" weight={5} />
-        <PolylineArrows positions={positions} />
+        {/* Tracé progressif */}
+        <Polyline positions={currentLine.length > 0 ? currentLine : positions} color="#F43F5E" weight={5} />
+        <PolylineArrows positions={currentLine.length > 0 ? currentLine : positions} />
 
+        {/* Marqueurs visibles selon replay */}
         {groupStepsByCity(enrichedSteps)
-          .filter((_, index) => index <= replayIndex)
+          .filter((_, index) => !isReplaying || index < currentLine.length)
           .map((step, index) => (
             <Marker
               key={index}
@@ -190,6 +194,7 @@ export default function ItineraryMap({ steps, cities }) {
           ))}
       </MapContainer>
 
+      {/* Version fullscreen */}
       {isFullscreen && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-fade">
           <div className="w-full h-full relative animate-zoom">
