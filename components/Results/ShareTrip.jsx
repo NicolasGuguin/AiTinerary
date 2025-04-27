@@ -94,51 +94,58 @@ export default function ShareTrip({ tripId, tripData, trajets }) {
       {storyReady && (
         <div className="mt-8 flex flex-col items-center gap-4">
             <div className="relative" style={{ width: "300px", height: "533px" }}>
-                <div
-                    ref={storyRef}
-                    style={{
-                    width: "1080px",
-                    height: "1920px",
-                    transform: "scale(0.2777)", // 300 / 1080
-                    transformOrigin: "top left",
-                    background: "linear-gradient(135deg, #141A2A, #F43F5E)",
-                    color: "white",
-                    padding: "80px 60px",
-                    fontFamily: "'Poppins', sans-serif",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    boxSizing: "border-box",
-                    }}
-                >
-              {/* En-tête */}
-              <div className="text-5xl font-extrabold text-white drop-shadow-md text-center">
+            <div
+            ref={storyRef}
+            style={{
+                width: "1080px",
+                height: "1920px",
+                background: "linear-gradient(135deg, #141A2A, #F43F5E)",
+                color: "white",
+                padding: "80px 60px",
+                fontFamily: "'Poppins', sans-serif",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                boxSizing: "border-box",
+            }}
+            >
+            {/* En-tête */}
+            <div className="flex flex-col items-center gap-8">
+                <div className="text-6xl font-extrabold text-white drop-shadow-md text-center">
                 🌍 Mon Aventure
-              </div>
-
-              {/* Centre : Map + Infos */}
-              <div className="flex flex-col items-center space-y-8">
-                <div className="text-3xl text-[#FDBA74] font-semibold text-center">
-                  {tripData.countries?.join(", ")}
                 </div>
-
-                <div className="w-full h-[400px]">
-                  <StoryMap steps={tripData.steps} cities={tripData.cities} />
+                <div className="text-4xl text-[#FDBA74] font-bold text-center">
+                {tripData.countries?.join(", ")}
                 </div>
+            </div>
 
-                <div className="text-center space-y-2 mt-6">
-                  <div className="text-xl">{tripData.startDate} — {tripData.steps.length} jours</div>
-                  <div className="text-lg">{Math.round(totalDistance)} km parcourus</div>
-                  <div className="text-md text-white/80">{stepsSummary.join(" ➔ ")}</div>
+            {/* Carte */}
+            <div className="flex justify-center items-center flex-grow">
+                <div style={{ width: "80%", aspectRatio: "4/5", maxWidth: "700px" }}>
+                <StoryMap steps={tripData.steps} cities={tripData.cities} />
                 </div>
-              </div>
+            </div>
 
-              {/* Bas : Lien */}
-              <div className="text-center text-sm opacity-80">
+            {/* Infos voyage */}
+            <div className="flex flex-col items-center gap-4 text-center">
+                <div className="text-2xl">
+                {tripData.startDate} — {tripData.steps.length} jours
+                </div>
+                <div className="text-xl">
+                {Math.round(totalDistance)} km parcourus
+                </div>
+                <div className="text-lg opacity-80">
+                {stepsSummary.join(" ➔ ")}
+                </div>
+            </div>
+
+            {/* Footer */}
+            <div className="text-center text-sm opacity-70 mt-10">
                 Généré avec <strong>AiTinerary</strong> 🚀<br />
                 aitinerary-webapp.vercel.app
-              </div>
             </div>
+            </div>
+
           </div>
 
           <button

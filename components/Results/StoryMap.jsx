@@ -6,8 +6,8 @@ function createCustomIcon(index) {
   return new L.DivIcon({
     html: `
       <div style="
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         background-color: #F43F5E;
         border-radius: 50%;
         display: flex;
@@ -16,39 +16,47 @@ function createCustomIcon(index) {
         color: white;
         font-weight: bold;
         font-size: 16px;
-        box-shadow: 0 0 6px #F43F5E;
+        box-shadow: 0 0 8px #F43F5E;
       ">
         ${index + 1}
       </div>
     `,
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    className: "" // <= pas besoin de classe spéciale
   });
 }
 
 export default function StoryMap({ steps, cities }) {
   const mapRef = useRef(null);
 
-  const enrichedSteps = steps.map((step) => {
-    const cityInfo = cities.find((c) => c.id === step.cityId);
-    return cityInfo ? [cityInfo.lat, cityInfo.lng] : null;
-  }).filter(Boolean);
+  // 🔥 Construire une liste unique des villes (cityId), dans l'ordre du trip
+  const uniqueCities = [];
+  const cityPositions = [];
+
+  steps.forEach((step) => {
+    const city = cities.find((c) => c.id === step.cityId);
+    if (city && !uniqueCities.includes(city.id)) {
+      uniqueCities.push(city.id);
+      cityPositions.push([city.lat, city.lng]);
+    }
+  });
 
   useEffect(() => {
-    if (mapRef.current && enrichedSteps.length > 0) {
-      mapRef.current.fitBounds(enrichedSteps, { padding: [60, 60] }); // 🔥 Plus de padding visuel
+    if (mapRef.current && cityPositions.length > 0) {
+      mapRef.current.fitBounds(cityPositions, { padding: [80, 80] });
     }
-  }, [enrichedSteps]);
+  }, [cityPositions]);
 
-  if (enrichedSteps.length === 0) return null;
+  if (cityPositions.length === 0) return null;
 
   return (
     <div
-    className="relative bg-[#f9fafb] rounded-2xl overflow-hidden shadow-lg"
-    style={{ width: "720px", height: "960px", margin: "0 auto" }}
+      className="relative bg-[#f9fafb] rounded-2xl overflow-hidden shadow-lg"
+      style={{ width: "720px", height: "960px", margin: "0 auto" }}
     >
       <MapContainer
-        center={enrichedSteps[0]}
+        center={cityPositions[0]}
         zoom={6}
         scrollWheelZoom={false}
         dragging={false}
@@ -63,8 +71,8 @@ export default function StoryMap({ steps, cities }) {
         <TileLayer
           url="https://{s}.tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=WU6TJdxzyeSkRDOh1rujsv1StIDjTRnL4h3uFGr597sDtHhfGpvejbH1YDYVwuBK"
         />
-        <Polyline positions={enrichedSteps} color="#F43F5E" weight={4} />
-        {enrichedSteps.map((pos, index) => (
+        <Polyline positions={cityPositions} color="#F43F5E" weight={4} />
+        {cityPositions.map((pos, index) => (
           <Marker key={index} position={pos} icon={createCustomIcon(index)} />
         ))}
       </MapContainer>
