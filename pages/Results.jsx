@@ -24,6 +24,7 @@ export default function Results() {
   const location = useLocation();
   const [tripRaw, setTripRaw] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Charge le voyage depuis Supabase si tripId présent
   useEffect(() => {
@@ -99,7 +100,7 @@ export default function Results() {
 
         <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">
           <h2 className="text-2xl font-bold text-secondary mb-6">Carte de l’itinéraire</h2>
-          <ItineraryMap steps={steps} cities={cities} />
+          <ItineraryMap steps={steps} cities={cities} isFullscreen={isFullscreen} setIsFullscreen={setIsFullscreen} />
         </section>
 
         <section className="bg-card rounded-2xl p-4 md:p-10 shadow-lg">

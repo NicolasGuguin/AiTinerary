@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { useMapContext } from "../../context/MapContext";
 import { motion } from "framer-motion";
 import { apiKeys } from "../../config/apiKeys";
 
-export default function DailyCardsCarousel({ steps, cities, tripData }) {
-  const { isFullscreen } = useMapContext();
+export default function DailyCardsCarousel({ steps, cities, tripData, isFullscreen }) {
   const AUTO_SCROLL = true;
   const AUTO_SCROLL_INTERVAL = 10000;
   const fallbackImage = "https://source.unsplash.com/400x300/?travel,tourism";
