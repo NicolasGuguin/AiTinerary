@@ -16,10 +16,13 @@ export default function Footer() {
           <Link to="/create" className="hover:text-primary transition">Créer un Voyage</Link>
           <Link to="/my-trips" className="hover:text-primary transition">Mes Voyages</Link>
           <Link to="/premium" className="hover:text-primary transition">Premium</Link>
-          <a href="mailto:contact@aitinerary.com" className="hover:text-primary transition">Contact</a>
+          <a href="n.guguin@gmail.com" className="hover:text-primary transition">Contact</a>
+          <Link to="/legal" className="hover:text-primary transition">Mentions légales</Link>
+          <Link to="/privacy-policy" className="hover:text-primary transition">Politique de confidentialité</Link>
+          <Link to="/terms-of-use" className="hover:text-primary transition">CGU</Link>
         </div>
 
-        {/* Mentions légales */}
+        {/* Copyright */}
         <div className="text-xs text-gray-500 text-center">
           © {new Date().getFullYear()} AiTinerary — Tous droits réservés
         </div>

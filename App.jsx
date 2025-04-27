@@ -9,6 +9,9 @@ import Signup from "./pages/Signup";
 import PremiumPage from "./pages/Premium";
 import PremiumSuccess from "./pages/PremiumSuccess"; 
 import Footer from "./components/Footer";
+import Legal from "./pages/Legal";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfUse from "./pages/TermsOfUse";
 import LanternsBackground from "./components/LanternsBackground";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { supabase } from './lib/supabaseClient'; 
@@ -29,6 +32,9 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/premium" element={<PremiumPage />} />
             <Route path="/premium-success" element={<PremiumSuccess />} />
+            <Route path="/legal" element={<Legal />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-use" element={<TermsOfUse />} />
           </Routes>
         </div>
         <Footer />
