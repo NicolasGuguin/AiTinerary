@@ -1,11 +1,12 @@
-// ShareTrip.jsx
 import { useState, useRef } from "react";
-import { FaLink, FaShareAlt, FaInstagram } from "react-icons/fa";
+import { FaLink, FaShareAlt, FaInstagram, FaTimes, FaDownload } from "react-icons/fa";
 import html2canvas from "html2canvas";
 
 export default function ShareTrip({ tripId, tripData }) {
   const [copied, setCopied] = useState(false);
-  const [storyGenerated, setStoryGenerated] = useState(false);
+  const [loadingStory, setLoadingStory] = useState(false);
+  const [storyImage, setStoryImage] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
   const storyRef = useRef(null);
 
   const shareUrl = `${window.location.origin}/results/${tripId}`;
@@ -34,26 +35,33 @@ export default function ShareTrip({ tripId, tripData }) {
 
   const handleCreateStory = async () => {
     if (!storyRef.current) return;
+    setLoadingStory(true);
+    storyRef.current.style.display = "block"; // Affiche la story temporairement
 
-    const canvas = await html2canvas(storyRef.current, {
-      useCORS: true,
-      backgroundColor: null,
-      scale: 2,
-    });
-
-    const link = document.createElement("a");
-    link.download = "story-voyage.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-
-    setStoryGenerated(true);
-    setTimeout(() => {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    }, 500);
+    try {
+      const canvas = await html2canvas(storyRef.current, {
+        useCORS: true,
+        backgroundColor: null,
+        scale: 2,
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      setStoryImage(dataUrl);
+      setShowPreview(true);
+    } catch (err) {
+      console.error("Erreur création Story", err);
+      alert("Erreur lors de la création de la Story.");
+    } finally {
+      setLoadingStory(false);
+      storyRef.current.style.display = "none"; // Cache à nouveau
+    }
   };
 
-  const handleOpenInstagram = () => {
-    window.location.href = "instagram://story-camera";
+  const handleDownloadStory = () => {
+    if (!storyImage) return;
+    const link = document.createElement("a");
+    link.href = storyImage;
+    link.download = "story-voyage.png";
+    link.click();
   };
 
   const stepsSummary = tripData.steps.slice(0, 4).map((step) => {
@@ -62,11 +70,10 @@ export default function ShareTrip({ tripId, tripData }) {
   });
 
   return (
-    <section className="bg-card rounded-2xl p-6 md:p-10 shadow-lg space-y-8 relative">
-      <h2 className="text-2xl font-bold text-secondary text-center">Partager votre aventure</h2>
+    <section className="bg-card rounded-2xl p-6 md:p-10 shadow-lg space-y-6 relative">
+      <h2 className="text-2xl font-bold text-secondary">Partager votre aventure</h2>
 
-      {/* Boutons centrés */}
-      <div className="flex flex-wrap justify-center gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <button
           onClick={handleCopy}
           className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white hover:bg-secondary hover:text-black transition font-semibold"
@@ -85,33 +92,19 @@ export default function ShareTrip({ tripId, tripData }) {
 
         <button
           onClick={handleCreateStory}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white hover:brightness-110 transition font-semibold"
+          disabled={loadingStory}
+          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white hover:brightness-110 transition font-semibold disabled:opacity-50"
         >
-          <FaInstagram />
-          Créer une Story
+          {loadingStory ? (
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+            <FaInstagram />
+          )}
+          {loadingStory ? "Création..." : "Créer une Story"}
         </button>
       </div>
 
-      {/* Résultat visible après création */}
-      {storyGenerated && (
-        <div className="text-center space-y-4 pt-8 animate-fadeIn">
-          <p className="text-lg text-secondary font-semibold">
-            ✅ Votre Story est prête !
-          </p>
-          <p className="text-sm text-gray-400">
-            Ouvrez Instagram et ajoutez-la depuis votre galerie 📲
-          </p>
-
-          <button
-            onClick={handleOpenInstagram}
-            className="flex items-center gap-2 px-6 py-3 mx-auto rounded-xl bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white hover:brightness-110 transition font-semibold"
-          >
-            📲 Ouvrir Instagram
-          </button>
-        </div>
-      )}
-
-      {/* Story Preview cachée pour html2canvas */}
+      {/* Hidden Story */}
       <div className="hidden">
         <div
           ref={storyRef}
@@ -125,30 +118,54 @@ export default function ShareTrip({ tripId, tripData }) {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            borderRadius: "40px",
           }}
         >
-          <div className="text-5xl font-extrabold text-white drop-shadow-md">
+          <div className="text-4xl font-extrabold text-white drop-shadow-md">
             🌍 Mon Aventure
           </div>
 
-          <div className="space-y-8">
-            <div className="text-3xl text-[#FDBA74] font-bold">
+          <div className="space-y-6">
+            <div className="text-2xl text-[#FDBA74]">
               {tripData.countries?.join(", ")}
             </div>
-            <div className="text-2xl">
+            <div className="text-lg">
               {stepsSummary.join(" ➔ ")}
             </div>
-            <div className="mt-6 text-md opacity-80">
+            <div className="mt-6 text-sm opacity-80">
               {tripData.startDate} – {tripData.steps.length} jours
             </div>
           </div>
 
-          <div className="text-md text-center opacity-60">
+          <div className="text-sm text-center opacity-60">
             ✈️ Généré avec AiTinerary
           </div>
         </div>
       </div>
+
+      {/* Modal Preview */}
+      {showPreview && storyImage && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-fade">
+          <div className="relative bg-[#121827] rounded-2xl shadow-lg overflow-hidden w-full max-w-[400px] p-4 space-y-4">
+            <img src={storyImage} alt="Story Preview" className="rounded-xl w-full" />
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={handleDownloadStory}
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:bg-secondary hover:text-black transition"
+              >
+                <FaDownload />
+                Télécharger
+              </button>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-xl hover:bg-red-500 transition"
+              >
+                <FaTimes />
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
