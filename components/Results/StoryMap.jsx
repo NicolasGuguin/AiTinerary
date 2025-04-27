@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Polyline, Marker } from "react-leaflet";
 import L from "leaflet";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function createCustomIcon(index) {
   return new L.DivIcon({
@@ -23,12 +23,12 @@ function createCustomIcon(index) {
     `,
     iconSize: [32, 32],
     iconAnchor: [16, 16],
-    className: "" // <= pas besoin de classe spéciale
   });
 }
 
 export default function StoryMap({ steps, cities }) {
   const mapRef = useRef(null);
+  const [bounds, setBounds] = useState(null);
 
   // 🔥 Construire une liste unique des villes (cityId), dans l'ordre du trip
   const uniqueCities = [];
@@ -45,24 +45,23 @@ export default function StoryMap({ steps, cities }) {
   useEffect(() => {
     if (mapRef.current && cityPositions.length > 0) {
       const map = mapRef.current;
-      const container = map.getContainer();
-      const containerWidth = container.clientWidth;
-      const containerHeight = container.clientHeight;
-  
-      // 🔥 Définir un padding intelligent : plus haut que large
-      const paddingX = Math.max(20, containerWidth * 0.05); // 5% minimum
-      const paddingY = Math.max(20, containerHeight * 0.12); // 12% minimum
-  
-      map.fitBounds(cityPositions, {
-        paddingTopLeft: [paddingX, paddingY],
-        paddingBottomRight: [paddingX, paddingY],
+      const newBounds = L.latLngBounds(cityPositions);
+      setBounds(newBounds);
+
+      // Premier fitBounds avec padding
+      map.fitBounds(newBounds, {
+        paddingTopLeft: [60, 100],
+        paddingBottomRight: [60, 100],
       });
+
+      // 🔥 Petit zoom-out manuel pour avoir plus d'air autour
+      setTimeout(() => {
+        map.setZoom(map.getZoom() - 1);
+      }, 300);
     }
   }, [cityPositions]);
-  
-  
 
-  if (cityPositions.length === 0) return null;
+  if (cityPositions.length === 0 || !bounds) return null;
 
   return (
     <div
@@ -70,7 +69,8 @@ export default function StoryMap({ steps, cities }) {
       style={{ width: "720px", height: "960px", margin: "0 auto" }}
     >
       <MapContainer
-        center={cityPositions[0]}
+        bounds={bounds}
+        center={bounds.getCenter()}
         zoom={6}
         scrollWheelZoom={false}
         dragging={false}
