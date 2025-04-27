@@ -9,6 +9,14 @@ export default function ShareTrip({ tripId, tripData, trajets }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const storyRef = useRef(null);
 
+  const slogans = [
+    "Une aventure à chaque pas",
+    "Chaque voyage est une histoire",
+    "Explore. Ressens. Vis.",
+    "Un monde à découvrir",
+    "Des souvenirs sur la route",
+  ];
+  const randomSlogan = slogans[Math.floor(Math.random() * slogans.length)];
   const shareUrl = `${window.location.origin}/results/${tripId}`;
 
   const handleCopy = async () => {
@@ -95,55 +103,66 @@ export default function ShareTrip({ tripId, tripData, trajets }) {
         <div className="mt-8 flex flex-col items-center gap-4">
             <div className="relative" style={{ width: "360px", height: "640px", overflow: "hidden" }}>
             <div
-                ref={storyRef}
-                style={{
-                width: "1080px",
-                height: "1920px",
-                transform: "scale(0.3333)",
-                transformOrigin: "top left",
-                background: "linear-gradient(135deg, #141A2A, #F43F5E)",
-                color: "white",
-                padding: "80px 60px",
-                fontFamily: "'Poppins', sans-serif",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                boxSizing: "border-box",
-                }}
-            >
-            {/* En-tête */}
-            <div className="flex flex-col items-center gap-4">
-                <div className="text-8xl font-extrabold text-white drop-shadow-md text-center">
-                🌍 Mon Aventure
-                </div>
-                <div className="text-7xl text-[#FDBA74] font-bold text-center">
-                {tripData.countries?.join(", ")}
-                </div>
-            </div>
+  ref={storyRef}
+  style={{
+    width: "1080px",
+    height: "1920px",
+    transform: "scale(0.3333)",
+    transformOrigin: "top left",
+    background: "linear-gradient(135deg, #141A2A, #F43F5E)",
+    color: "white",
+    padding: "60px 40px", // 🔥 Moins haut qu'avant
+    fontFamily: "'Poppins', sans-serif",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    position: "relative",
+    boxSizing: "border-box",
+  }}
+>
+  {/* En-tête */}
+  <div className="flex flex-col items-center gap-6">
+    <div className="text-7xl font-extrabold text-white drop-shadow-md text-center">
+      🌍 Mon Aventure
+    </div>
+    <div className="text-9xl text-[#FDBA74] font-bold text-center">
+      {tripData.countries?.join(", ")}
+    </div>
+  </div>
 
-            {/* Carte */}
-            <div className="flex justify-center items-center flex-grow">
-                <div style={{ width: "80%", aspectRatio: "4/5", maxWidth: "700px" }}>
-                <StoryMap steps={tripData.steps} cities={tripData.cities} />
-                </div>
-            </div>
+  {/* Trait vertical au milieu */}
+  <div className="absolute left-1/2 top-[25%] bottom-[23%] w-4 bg-white/40 rounded-full"></div>
 
-            {/* Infos voyage */}
-            <div className="flex flex-col items-center gap-4 text-center">
-                <div className="text-6xl">
-                {tripData.steps.length} jours
-                </div>
-                <div className="text-6xl">
-                {Math.round(totalDistance)} km parcourus
-                </div>
-            </div>
+  {/* Carte */}
+  <div className="flex justify-center items-center flex-grow my-10 relative z-10">
+  <div className="w-[80%] max-w-[700px] bg-[#FDBA74]/90 rounded-3xl p-4 shadow-lg">
+    <div className="border-[8px] border-white rounded-3xl overflow-hidden shadow-xl">
+      <StoryMap steps={tripData.steps} cities={tripData.cities} />
+    </div>
+  </div>
+</div>
 
-            {/* Footer */}
-            <div className="text-center text-4xl opacity-80 tracking-wider leading-relaxed mt-10">
-            Généré avec <strong>AiTinerary</strong> 🚀<br />
-            http://aitinerary-webapp.vercel.app
-            </div>
-            </div>
+  {/* Infos voyage */}
+  <div className="flex flex-col items-center gap-4 text-center z-10">
+    <div className="text-7xl">
+      {tripData.steps.length} jours
+    </div>
+    <div className="text-7xl">
+      {Math.round(totalDistance)} km parcourus
+    </div>
+    {/* Slogan */}
+    <div className="text-4xl italic text-white/80 mt-2">
+    {randomSlogan}
+    </div>
+  </div>
+
+  {/* Footer */}
+  <div className="text-center text-4xl opacity-80 tracking-wider leading-relaxed mt-8 z-10">
+    Généré avec <strong>AiTinerary</strong> 🚀<br />
+    http://aitinerary-webapp.vercel.app
+  </div>
+</div>
+
 
           </div>
 
