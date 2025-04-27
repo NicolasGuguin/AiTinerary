@@ -12,6 +12,7 @@ import DashboardSocial from "../components/Results/DashboardSocial";
 import DashboardConseils from "../components/Results/DashboardConseils";
 import DashboardActivitiesCarousel from "../components/Results/DashboardActivitiesCarousel";
 import DashboardFlights from "../components/Results/DashboardFlights";
+import ShareTrip from "../components/Results/ShareTrip";
 
 function formatMinutes(mins) {
   const h = Math.floor(mins / 60);
@@ -150,6 +151,8 @@ export default function Results() {
           <h2 className="text-2xl font-bold text-secondary mb-6">Ce que les voyageurs postent</h2>
           <DashboardSocial cities={cities} />
         </section>
+
+        <ShareTrip tripId={tripId} tripData={tripData} />
       </div>
     </div>
   );

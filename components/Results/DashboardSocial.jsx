@@ -99,55 +99,63 @@ export default function DashboardSocial({ cities }) {
       </div>
 
       {/* Carousel des vidéos */}
-      <div className="relative w-full">
-        <button
-          onClick={() => scroll("left")}
-          className="absolute top-1/2 left-2 z-10 transform -translate-y-1/2 p-2 bg-primary text-white rounded-full shadow hover:bg-secondary hover:text-black"
+     {/* Carousel des vidéos */}
+<div className="relative w-full">
+  <button
+    onClick={() => scroll("left")}
+    className="absolute top-1/2 left-2 z-10 transform -translate-y-1/2 p-2 bg-primary text-white rounded-full shadow hover:bg-secondary hover:text-black"
+  >
+    <MdChevronLeft />
+  </button>
+
+  <div ref={scrollRef} className="overflow-hidden w-full">
+    <div
+      className="flex transition-all gap-4"
+      style={{
+        width: `${videos.length * (cardWidth + 16)}px`, // ⚡ force la largeur du flex
+        transform: `translateX(-${videoIndex * (cardWidth + 16)}px)`, // ⚡ translation propre
+        transition: "transform 0.5s ease",
+      }}
+    >
+      {videos.map((v) => (
+        <div
+          key={v.id.videoId}
+          className="w-[270px] flex-shrink-0 rounded-2xl overflow-hidden shadow-xl relative group bg-[#1C2431] transition-transform duration-300 hover:scale-105"
         >
-          <MdChevronLeft />
-        </button>
+          <div className="relative h-[200px] overflow-hidden">
+            <iframe
+              width="100%"
+              height="100%"
+              src={`https://www.youtube.com/embed/${v.id.videoId}?origin=${window.location.origin}`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="rounded-t-2xl"
+            ></iframe>
 
-        <div ref={scrollRef} className="overflow-hidden w-full px-10">
-        <div className="flex transition-all gap-4 justify-center sm:justify-start">
-            {videos.map((v) => (
-              <div
-                key={v.id.videoId}
-                className="w-[260px] flex-shrink-0 rounded-2xl overflow-hidden shadow-xl relative group bg-[#1C2431] transition-transform duration-300 hover:scale-105"
-              >
-                <div className="relative h-[200px] overflow-hidden">
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    src={`https://www.youtube.com/embed/${v.id.videoId}?origin=${window.location.origin}`}
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                    className="rounded-t-2xl"
-                  ></iframe>
-
-                  {/* Overlay non bloquant */}
-                  <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-50 transition duration-300 flex items-end pointer-events-none">
-                    <div className="text-white p-3 text-sm font-medium line-clamp-2 w-full bg-gradient-to-t from-black/70 to-transparent pointer-events-none">
-                      {v.snippet.title}
-                    </div>
-                  </div>
-                </div>
-                <div className="p-3">
-                  <p className="text-xs text-gray-400">@{v.snippet.channelTitle}</p>
-                </div>
+            <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-50 transition duration-300 flex items-end pointer-events-none">
+              <div className="text-white p-3 text-sm font-medium line-clamp-2 w-full bg-gradient-to-t from-black/70 to-transparent pointer-events-none">
+                {v.snippet.title}
               </div>
-            ))}
+            </div>
+          </div>
+          <div className="p-3">
+            <p className="text-xs text-gray-400">@{v.snippet.channelTitle}</p>
           </div>
         </div>
+      ))}
+    </div>
+  </div>
 
-        <button
-          onClick={() => scroll("right")}
-          className="absolute top-1/2 right-2 z-10 transform -translate-y-1/2 p-2 bg-primary text-white rounded-full shadow hover:bg-secondary hover:text-black"
-        >
-          <MdChevronRight />
-        </button>
-      </div>
+  <button
+    onClick={() => scroll("right")}
+    className="absolute top-1/2 right-2 z-10 transform -translate-y-1/2 p-2 bg-primary text-white rounded-full shadow hover:bg-secondary hover:text-black"
+  >
+    <MdChevronRight />
+  </button>
+</div>
+
 
       {/* Pagination */}
       <div className="flex justify-center mt-4 gap-1">

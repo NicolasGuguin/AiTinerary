@@ -41,7 +41,7 @@ export default function DailyCardsCarousel({ steps, cities, tripData, isFullscre
 
         try {
           pendingLoads.current.add(cityName);
-          setLoadingCities(prev => new Set(prev).add(cityName));
+          setLoadingCities((prev) => new Set(prev).add(cityName));
 
           const country = tripData.countries[0];
           const query = `${cityName} ${country}`.trim();
@@ -68,7 +68,7 @@ export default function DailyCardsCarousel({ steps, cities, tripData, isFullscre
           }));
         } finally {
           pendingLoads.current.delete(cityName);
-          setLoadingCities(prev => {
+          setLoadingCities((prev) => {
             const next = new Set(prev);
             next.delete(cityName);
             return next;
@@ -99,18 +99,26 @@ export default function DailyCardsCarousel({ steps, cities, tripData, isFullscre
     else if (info.offset.x > 100) scroll("left");
   };
 
+  // 🔥 Si fullscreen → on cache tout
+  if (isFullscreen) {
+    return null;
+  }
+
   return (
     <div className="relative w-full overflow-hidden pt-6">
-      {!isFullscreen && (
-        <>
-          <button onClick={() => scroll("left")} className="absolute top-1/2 -translate-y-1/2 left-2 z-20 bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all">
-            ◀
-          </button>
-          <button onClick={() => scroll("right")} className="absolute top-1/2 -translate-y-1/2 right-2 z-20 bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all">
-            ▶
-          </button>
-        </>
-      )}
+      <button
+        onClick={() => scroll("left")}
+        className="absolute top-1/2 -translate-y-1/2 left-2 z-20 bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all"
+      >
+        ◀
+      </button>
+
+      <button
+        onClick={() => scroll("right")}
+        className="absolute top-1/2 -translate-y-1/2 right-2 z-20 bg-primary text-white px-3 py-2 rounded-full shadow-lg hover:bg-secondary hover:text-black transition-all"
+      >
+        ▶
+      </button>
 
       <div className="overflow-hidden px-2 sm:px-6 md:px-12 mx-auto">
         <motion.div
@@ -175,7 +183,9 @@ export default function DailyCardsCarousel({ steps, cities, tripData, isFullscre
             {steps.map((_, i) => (
               <div
                 key={i}
-                className={`w-2.5 h-2.5 rounded-full ${i === currentIndex ? "bg-primary" : "bg-gray-500"} transition-all duration-300`}
+                className={`w-2.5 h-2.5 rounded-full ${
+                  i === currentIndex ? "bg-primary" : "bg-gray-500"
+                } transition-all duration-300`}
               />
             ))}
           </div>

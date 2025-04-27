@@ -4,7 +4,7 @@ import L from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import "leaflet-polylinedecorator";
 
-// 🔥 Custom Marker
+// 🔥 Icône custom numérotée
 function createCustomIcon(index) {
   return new L.DivIcon({
     className: 'custom-marker group',
@@ -21,7 +21,7 @@ function createCustomIcon(index) {
   });
 }
 
-// Flèches sur le tracé
+// 🔥 Ajout de flèches sur le tracé
 function PolylineArrows({ positions }) {
   const map = useMap();
   useEffect(() => {
@@ -36,7 +36,7 @@ function PolylineArrows({ positions }) {
   return null;
 }
 
-// Groupement des étapes
+// 🔥 Groupement des villes uniques (avec liste de jours par ville)
 function groupStepsByCity(steps) {
   const grouped = [];
   const seen = new Set();
@@ -53,7 +53,6 @@ function groupStepsByCity(steps) {
   return grouped;
 }
 
-// 👉 ItineraryMap
 export default function ItineraryMap({ steps, cities, compact = false, isFullscreen, setIsFullscreen }) {
   const [replayIndex, setReplayIndex] = useState(0);
   const [isReplaying, setIsReplaying] = useState(false);
@@ -69,37 +68,39 @@ export default function ItineraryMap({ steps, cities, compact = false, isFullscr
     };
   });
 
-  const positions = enrichedSteps.filter((step) => step.location).map((step) => [step.location.lat, step.location.lng]);
+  const groupedCities = groupStepsByCity(enrichedSteps);
+
+  const cityPositions = groupedCities.map((g) => [g.location.lat, g.location.lng]);
 
   useEffect(() => {
-    if (mapRef.current && positions.length > 0) {
-      mapRef.current.fitBounds(positions, { padding: [50, 50] });
+    if (mapRef.current && cityPositions.length > 0) {
+      mapRef.current.fitBounds(cityPositions, { padding: [50, 50] });
       setCurrentLine([]);
     }
-  }, [positions]);
+  }, [cityPositions]);
 
   const startReplay = () => {
-    if (positions.length === 0) return;
+    if (cityPositions.length === 0) return;
     setIsReplaying(true);
     setReplayIndex(1);
-    setCurrentLine([positions[0]]);
+    setCurrentLine([cityPositions[0]]);
   };
 
   useEffect(() => {
     if (!isReplaying) return;
-    if (replayIndex >= positions.length) {
+    if (replayIndex >= cityPositions.length) {
       setIsReplaying(false);
       return;
     }
     const timer = setTimeout(() => {
-      setCurrentLine((prev) => [...prev, positions[replayIndex]]);
-      if (mapRef.current && positions[replayIndex]) {
-        mapRef.current.flyTo(positions[replayIndex], 7, { duration: 1 });
+      setCurrentLine((prev) => [...prev, cityPositions[replayIndex]]);
+      if (mapRef.current && cityPositions[replayIndex]) {
+        mapRef.current.flyTo(cityPositions[replayIndex], 7, { duration: 1 });
       }
       setReplayIndex((prev) => prev + 1);
     }, 800);
     return () => clearTimeout(timer);
-  }, [replayIndex, isReplaying, positions]);
+  }, [replayIndex, isReplaying, cityPositions]);
 
   return (
     <div className="space-y-4 relative z-10">
@@ -122,14 +123,14 @@ export default function ItineraryMap({ steps, cities, compact = false, isFullscr
       )}
 
       <MapContainer
-        center={positions[0]}
+        center={cityPositions[0]}
         zoom={6}
         scrollWheelZoom={false}
-        className="w-full h-[300px] rounded-xl z-10"
+        className={`w-full ${compact ? "h-[200px]" : "h-[300px]"} rounded-xl z-10`}
         whenCreated={(mapInstance) => {
           mapRef.current = mapInstance;
-          if (positions.length > 0) {
-            mapInstance.fitBounds(positions, { padding: [50, 50] });
+          if (cityPositions.length > 0) {
+            mapInstance.fitBounds(cityPositions, { padding: [50, 50] });
           }
         }}
       >
@@ -137,9 +138,10 @@ export default function ItineraryMap({ steps, cities, compact = false, isFullscr
           url="https://{s}.tile.jawg.io/jawg-terrain/{z}/{x}/{y}{r}.png?access-token=WU6TJdxzyeSkRDOh1rujsv1StIDjTRnL4h3uFGr597sDtHhfGpvejbH1YDYVwuBK"
           attribution='&copy; Jawg'
         />
-        <Polyline positions={currentLine.length > 0 ? currentLine : positions} color="#F43F5E" weight={5} />
-        <PolylineArrows positions={currentLine.length > 0 ? currentLine : positions} />
-        {groupStepsByCity(enrichedSteps)
+        <Polyline positions={currentLine.length > 0 ? currentLine : cityPositions} color="#F43F5E" weight={5} />
+        <PolylineArrows positions={currentLine.length > 0 ? currentLine : cityPositions} />
+
+        {groupedCities
           .filter((_, index) => !isReplaying || index < currentLine.length)
           .map((step, index) => (
             <Marker
@@ -157,7 +159,7 @@ export default function ItineraryMap({ steps, cities, compact = false, isFullscr
           ))}
       </MapContainer>
 
-      {/* Fullscreen */}
+      {/* Fullscreen mode */}
       {isFullscreen && (
         <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center animate-fade">
           <div className="w-full h-full relative animate-zoom">
@@ -169,13 +171,13 @@ export default function ItineraryMap({ steps, cities, compact = false, isFullscr
             </button>
 
             <MapContainer
-              center={positions[0]}
+              center={cityPositions[0]}
               zoom={6}
               scrollWheelZoom={true}
               className="w-full h-full z-0"
               whenCreated={(mapInstance) => {
-                if (positions.length > 0) {
-                  mapInstance.fitBounds(positions, { padding: [50, 50] });
+                if (cityPositions.length > 0) {
+                  mapInstance.fitBounds(cityPositions, { padding: [50, 50] });
                 }
               }}
             >
@@ -183,9 +185,9 @@ export default function ItineraryMap({ steps, cities, compact = false, isFullscr
                 url="https://{s}.tile.jawg.io/jawg-terrain/{z}/{x}/{y}{r}.png?access-token=WU6TJdxzyeSkRDOh1rujsv1StIDjTRnL4h3uFGr597sDtHhfGpvejbH1YDYVwuBK"
                 attribution='&copy; Jawg'
               />
-              <Polyline positions={positions} color="#F43F5E" weight={5} />
-              <PolylineArrows positions={positions} />
-              {groupStepsByCity(enrichedSteps).map((step, index) => (
+              <Polyline positions={cityPositions} color="#F43F5E" weight={5} />
+              <PolylineArrows positions={cityPositions} />
+              {groupedCities.map((step, index) => (
                 <Marker
                   key={index}
                   position={[step.location.lat, step.location.lng]}
