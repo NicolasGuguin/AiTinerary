@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Polyline, Marker } from "react-leaflet";
 import L from "leaflet";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 function createCustomIcon(index) {
   return new L.DivIcon({
@@ -28,9 +28,7 @@ function createCustomIcon(index) {
 
 export default function StoryMap({ steps, cities }) {
   const mapRef = useRef(null);
-  const [bounds, setBounds] = useState(null);
 
-  // 🔥 Construire une liste unique des villes (cityId), dans l'ordre du trip
   const uniqueCities = [];
   const cityPositions = [];
 
@@ -45,23 +43,21 @@ export default function StoryMap({ steps, cities }) {
   useEffect(() => {
     if (mapRef.current && cityPositions.length > 0) {
       const map = mapRef.current;
-      const newBounds = L.latLngBounds(cityPositions);
-      setBounds(newBounds);
+      const bounds = L.latLngBounds(cityPositions);
 
-      // Premier fitBounds avec padding
-      map.fitBounds(newBounds, {
-        paddingTopLeft: [60, 100],
-        paddingBottomRight: [60, 100],
+      map.fitBounds(bounds, {
+        paddingTopLeft: [80, 160], // Plus haut que large pour cadrer verticalement
+        paddingBottomRight: [80, 160],
       });
 
-      // 🔥 Petit zoom-out manuel pour avoir plus d'air autour
+      // 🔥 Zoom-out manuel très léger pour éviter d'être collé au bord
       setTimeout(() => {
         map.setZoom(map.getZoom() - 1);
-      }, 300);
+      }, 200);
     }
   }, [cityPositions]);
 
-  if (cityPositions.length === 0 || !bounds) return null;
+  if (cityPositions.length === 0) return null;
 
   return (
     <div
@@ -69,8 +65,7 @@ export default function StoryMap({ steps, cities }) {
       style={{ width: "720px", height: "960px", margin: "0 auto" }}
     >
       <MapContainer
-        bounds={bounds}
-        center={bounds.getCenter()}
+        center={cityPositions[0]} // 🔥 Important : démarrer sur le premier marker
         zoom={6}
         scrollWheelZoom={false}
         dragging={false}
