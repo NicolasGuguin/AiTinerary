@@ -99,7 +99,7 @@ export default function ShareTrip({ tripId, tripData, trajets }) {
                 style={{
                 width: "1080px",
                 height: "1920px",
-                transform: "scale(0.3333)", // 360/1080
+                transform: "scale(0.3333)",
                 transformOrigin: "top left",
                 background: "linear-gradient(135deg, #141A2A, #F43F5E)",
                 color: "white",
@@ -112,7 +112,7 @@ export default function ShareTrip({ tripId, tripData, trajets }) {
                 }}
             >
             {/* En-tête */}
-            <div className="flex flex-col items-center gap-8">
+            <div className="flex flex-col items-center gap-4">
                 <div className="text-8xl font-extrabold text-white drop-shadow-md text-center">
                 🌍 Mon Aventure
                 </div>
@@ -130,10 +130,10 @@ export default function ShareTrip({ tripId, tripData, trajets }) {
 
             {/* Infos voyage */}
             <div className="flex flex-col items-center gap-4 text-center">
-                <div className="text-4xl">
-                {tripData.startDate} — {tripData.steps.length} jours
+                <div className="text-8xl">
+                {tripData.steps.length} jours
                 </div>
-                <div className="text-3xl">
+                <div className="text-8xl">
                 {Math.round(totalDistance)} km parcourus
                 </div>
             </div>
@@ -141,7 +141,7 @@ export default function ShareTrip({ tripId, tripData, trajets }) {
             {/* Footer */}
             <div className="text-center text-xl opacity-70 mt-10 tracking-wide">
                 Généré avec <strong>AiTinerary</strong> 🚀<br />
-                aitinerary-webapp.vercel.app
+                http://aitinerary-webapp.vercel.app
             </div>
             </div>
 
